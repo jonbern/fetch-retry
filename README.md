@@ -1,5 +1,5 @@
 # fetch-retry
-Adds retry functionality to the `Fetch` API by wrapping `isomorphic-fetch` and retrying failing requests.
+Adds retry functionality to the `Fetch` API by wrapping [isomorphic-fetch](https://github.com/matthew-andrews/isomorphic-fetch/) and retrying failing requests.
 
 ## npm package
 
@@ -24,8 +24,10 @@ fetch(url, { retries: 5 })
 
 
 
-## Caveats
+### Caveats
 
 The `fetch` specification differs from jQuery.ajax() in mainly two ways that bear keeping in mind:
 
 * The Promise returned from fetch() won't reject on HTTP error status even if the response is a HTTP 404 or 500. Instead, it will resolve normally, and it will only reject on network failure, or if anything prevented the request from completing.
+
+Source: [Github fetch](https://github.com/github/fetch#caveats)

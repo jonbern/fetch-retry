@@ -9,8 +9,10 @@ npm install fetch-retry --save
 
 ## Example
 
+`fetch-retry` works the same way as `fetch`, but also accepts a `retries` property on the options argument. If `retries` is not specified, it will default to using 3 retries.
+
 ```javascript
-fetch(url)
+fetch(url, { retries: 5 })
   .then(response => {
     return response.json()
   })
@@ -19,6 +21,8 @@ fetch(url)
     console.log(json);
   });
 ```
+
+
 
 ## Caveats
 

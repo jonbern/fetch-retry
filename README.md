@@ -12,6 +12,10 @@ npm install fetch-retry --save
 `fetch-retry` works the same way as `fetch`, but also accepts a `retries` property on the options argument. If `retries` is not specified, it will default to using 3 retries.
 
 ```javascript
+var fetch = require('fetch-retry');
+```
+
+```javascript
 fetch(url, { retries: 5 })
   .then(response => {
     return response.json()

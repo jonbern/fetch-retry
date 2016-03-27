@@ -17,10 +17,10 @@ var fetch = require('fetch-retry');
 
 ```javascript
 fetch(url, { retries: 5 })
-  .then(response => {
-    return response.json()
+  .then(function(response) {
+    return response.json();
   })
-  .then(json => {
+  .then(function(json) {
     // do something with the result
     console.log(json);
   });

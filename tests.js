@@ -2,34 +2,34 @@
 var proxyquire = require('proxyquire').noPreserveCache();
 var sinon = require('sinon');
 var expect = require('expectations');
-var Promise = require("bluebird");
+var Promise = require('bluebird');
 
 describe('fetch-retry', function() {
 
-  let fetchRetry;
-  let fetch;
+  var fetchRetry;
+  var fetch;
 
-  let deferred1;
-  let deferred2;
-  let deferred3;
-  let deferred4;
+  var deferred1;
+  var deferred2;
+  var deferred3;
+  var deferred4;
 
-  let thenCallback;
-  let catchCallback;
+  var thenCallback;
+  var catchCallback;
 
-  let _setTimeout;
+  var _setTimeout;
 
   beforeEach(function() {
     _setTimeout = setTimeout;
 
-    setTimeout = function(callback, delay) {
+    setTimeout = function(callback) {
       callback();
     };
     setTimeout = sinon.spy(setTimeout);
   });
 
   afterEach(function() {
-    setTimeout = _setTimeout
+    setTimeout = _setTimeout;
   });
 
   beforeEach(function() {
@@ -44,7 +44,7 @@ describe('fetch-retry', function() {
     fetch.onCall(2).returns(deferred3.promise);
     fetch.onCall(3).returns(deferred4.promise);
 
-    let stubs = {
+    var stubs = {
       'isomorphic-fetch': fetch
     };
 
@@ -52,12 +52,12 @@ describe('fetch-retry', function() {
   });
 
 
-  describe("#url", function() {
+  describe('#url', function() {
 
-    let expectedUrl = 'http://some-url.com';
+    var expectedUrl = 'http://some-url.com';
 
     beforeEach(function() {
-      fetchRetry(expectedUrl)
+      fetchRetry(expectedUrl);
     });
 
     it('passes #url to fetch', function() {
@@ -66,9 +66,9 @@ describe('fetch-retry', function() {
 
   });
 
-  describe("#options", function() {
+  describe('#options', function() {
 
-    let expectedOptions = {
+    var expectedOptions = {
       retries: 3,
       whatever: 'something'
     };
@@ -168,49 +168,49 @@ describe('fetch-retry', function() {
 
         describe('when third call is a failure', function() {
 
+          beforeEach(function() {
+            deferred3.reject();
+          });
+
+          describe('when fourth call is a success', function() {
+
             beforeEach(function() {
-              deferred3.reject();
+              deferred4.resolve();
             });
 
-            describe('when fourth call is a success', function() {
+            describe('when resolved', function() {
 
-              beforeEach(function() {
-                deferred4.resolve();
+              it('invokes the then callback', function() {
+                expect(thenCallback.called).toBe(true);
               });
 
-              describe('when resolved', function() {
-
-                it('invokes the then callback', function() {
-                  expect(thenCallback.called).toBe(true);
-                });
-
-                it('calls fetch four times', function() {
-                  expect(fetch.callCount).toBe(4);
-                });
-
+              it('calls fetch four times', function() {
+                expect(fetch.callCount).toBe(4);
               });
 
             });
 
-            describe('when fourth call is a failure', function() {
+          });
 
-              beforeEach(function() {
-                deferred4.reject();
+          describe('when fourth call is a failure', function() {
+
+            beforeEach(function() {
+              deferred4.reject();
+            });
+
+            describe('when rejected', function() {
+
+              it('invokes the catch callback', function() {
+                expect(catchCallback.called).toBe(true);
               });
 
-              describe('when rejected', function() {
-
-                it('invokes the catch callback', function() {
-                  expect(catchCallback.called).toBe(true);
-                });
-
-                it('does not call fetch again', function() {
-                  expect(fetch.callCount).toBe(4);
-                });
-
+              it('does not call fetch again', function() {
+                expect(fetch.callCount).toBe(4);
               });
 
             });
+
+          });
 
         });
 
@@ -304,14 +304,14 @@ describe('fetch-retry', function() {
 });
 
 function defer() {
-    var resolve, reject;
-    var promise = new Promise(function() {
-        resolve = arguments[0];
-        reject = arguments[1];
-    });
-    return {
-        resolve: resolve,
-        reject: reject,
-        promise: promise
-    };
+  var resolve, reject;
+  var promise = new Promise(function() {
+    resolve = arguments[0];
+    reject = arguments[1];
+  });
+  return {
+    resolve: resolve,
+    reject: reject,
+    promise: promise
+  };
 }

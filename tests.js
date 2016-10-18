@@ -64,17 +64,39 @@ describe('fetch-retry', function() {
 
   describe('#options', function() {
 
-    var expectedOptions = {
-      retries: 3,
-      whatever: 'something'
-    };
+    describe('when #options are valid', function() {
 
-    beforeEach(function() {
-      fetchRetry('http://someUrl', expectedOptions);
+      var options;
+
+      beforeEach(function() {
+        options = {
+          retries: 3,
+          whatever: 'something'
+        };
+
+        fetchRetry('http://someUrl', options);
+      });
+
+      it('passes options to fetch', function() {
+        expect(fetch.getCall(0).args[1]).toEqual(options);
+      });
+
     });
 
-    it('passes options to fetch', function() {
-      expect(fetch.getCall(0).args[1]).toBe(expectedOptions);
+    describe('when #options are undefined or null', function() {
+
+      [undefined, null].forEach(function(testCase) {
+
+        beforeEach(function() {
+          fetchRetry('http://someUrl', testCase);
+        });
+
+        it('does not pass through options to fetch', function() {
+          expect(fetch.getCall(0).args[1]).toEqual(undefined);
+        });
+
+      });
+
     });
 
   });

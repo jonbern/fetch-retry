@@ -7,14 +7,11 @@ module.exports = function(url, options) {
   var retries = 3;
   var timeout = 1000;
 
-  if (typeof options == 'undefined') {
-    options = {};
-  }
-
-  if (options.retries) {
+  if (options && options.retries) {
     retries = options.retries;
   }
-  if (options.timeout) {
+
+  if (options && options.timeout) {
     timeout = options.timeout;
   }
 

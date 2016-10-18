@@ -77,7 +77,7 @@ describe('fetch-retry', function() {
       fetchRetry('http://someUrl', expectedOptions);
     });
 
-    it('passes #url to fetch', function() {
+    it('passes options to fetch', function() {
       expect(fetch.getCall(0).args[1]).toBe(expectedOptions);
     });
 

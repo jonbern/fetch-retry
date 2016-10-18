@@ -17,19 +17,16 @@ describe('fetch-retry', function() {
   var thenCallback;
   var catchCallback;
 
-  var _setTimeout;
+  var clock;
+  var delay;
 
   beforeEach(function() {
-    _setTimeout = setTimeout;
-
-    setTimeout = function(callback) {
-      callback();
-    };
-    setTimeout = sinon.spy(setTimeout);
+    delay = 1000;
+    clock = sinon.useFakeTimers();
   });
 
   afterEach(function() {
-    setTimeout = _setTimeout;
+    clock.restore();
   });
 
   beforeEach(function() {
@@ -50,7 +47,6 @@ describe('fetch-retry', function() {
 
     fetchRetry = proxyquire('./', stubs);
   });
-
 
   describe('#url', function() {
 
@@ -123,6 +119,7 @@ describe('fetch-retry', function() {
       describe('when second call is a succcess', function() {
 
         beforeEach(function() {
+          clock.tick(delay);
           deferred2.resolve();
         });
 
@@ -144,12 +141,14 @@ describe('fetch-retry', function() {
 
         beforeEach(function() {
           deferred2.reject();
+          clock.tick(delay);
         });
 
         describe('when third call is a success', function() {
 
           beforeEach(function() {
             deferred3.resolve();
+            clock.tick(delay);
           });
 
           describe('when resolved', function() {
@@ -170,12 +169,14 @@ describe('fetch-retry', function() {
 
           beforeEach(function() {
             deferred3.reject();
+            clock.tick(delay);
           });
 
           describe('when fourth call is a success', function() {
 
             beforeEach(function() {
               deferred4.resolve();
+              clock.tick(delay);
             });
 
             describe('when resolved', function() {
@@ -196,6 +197,7 @@ describe('fetch-retry', function() {
 
             beforeEach(function() {
               deferred4.reject();
+              clock.tick(delay);
             });
 
             describe('when rejected', function() {
@@ -255,12 +257,14 @@ describe('fetch-retry', function() {
 
       beforeEach(function() {
         deferred1.reject();
+        clock.tick(delay);
       });
 
       describe('when second call is a succcess', function() {
 
         beforeEach(function() {
           deferred2.resolve();
+          clock.tick(delay);
         });
 
         describe('when resolved', function() {
@@ -281,6 +285,7 @@ describe('fetch-retry', function() {
 
         beforeEach(function() {
           deferred2.reject();
+          clock.tick(delay);
         });
 
         describe('when rejected', function() {
@@ -293,6 +298,55 @@ describe('fetch-retry', function() {
             expect(fetch.callCount).toBe(2);
           });
 
+        });
+
+      });
+
+    });
+
+  });
+
+  describe('when #options.timeout is provided', function() {
+
+    var options;
+
+    beforeEach(function() {
+      options = {
+        timeout: 5000
+      };
+
+      thenCallback = sinon.spy();
+
+      fetchRetry('http://someUrl', options)
+        .then(thenCallback)
+    });
+
+    describe('when first call is unsuccessful', function() {
+
+      beforeEach(function() {
+        deferred1.reject();
+      });
+
+      describe('after specified time', function() {
+
+        beforeEach(function() {
+          clock.tick(options.timeout);
+        });
+
+        it('invokes fetch again', function() {
+          expect(fetch.callCount).toBe(2);
+        });
+
+      });
+
+      describe('after less than specified time', function() {
+
+        beforeEach(function() {
+          clock.tick(1000);
+        });
+
+        it('does not invoke fetch again', function() {
+          expect(fetch.callCount).toBe(1);
         });
 
       });

@@ -16,7 +16,10 @@ var fetch = require('fetch-retry');
 ```
 
 ```javascript
-fetch(url, { retries: 5 })
+fetch(url, {
+    retries: 5,
+    timeout: 1500
+    })
   .then(function(response) {
     return response.json();
   })

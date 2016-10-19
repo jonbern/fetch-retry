@@ -1,7 +1,7 @@
 {
   "name": "fetch-retry",
   "version": "1.0.0",
-  "description": "Fetch API with retry functionality",
+  "description": "Adds retry functionality to the Fetch API",
   "repository": "https://github.com/jonbern/fetch-retry.git",
   "main": "index.js",
   "scripts": {

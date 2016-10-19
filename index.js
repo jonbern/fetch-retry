@@ -5,14 +5,14 @@ var Promise = require('bluebird');
 module.exports = function(url, options) {
 
   var retries = 3;
-  var timeout = 1000;
+  var retryDelay = 1000;
 
   if (options && options.retries) {
     retries = options.retries;
   }
 
-  if (options && options.timeout) {
-    timeout = options.timeout;
+  if (options && options.retryDelay) {
+    retryDelay = options.retryDelay;
   }
 
   return new Promise(function(resolve, reject) {
@@ -25,7 +25,7 @@ module.exports = function(url, options) {
           if (n > 0) {
             setTimeout(function() {
               wrappedFetch(--n);
-            }, timeout);
+            }, retryDelay);
           } else {
             reject(error);
           }

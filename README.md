@@ -1,5 +1,7 @@
 # fetch-retry
-Adds retry functionality to the `Fetch` API by wrapping [isomorphic-fetch](https://github.com/matthew-andrews/isomorphic-fetch/) and retrying failing requests.
+Adds retry functionality to the `Fetch` API.
+
+It wraps [isomorphic-fetch](https://github.com/matthew-andrews/isomoretries) and retries requests that fail due to network issues.
 
 ## npm package
 
@@ -8,8 +10,7 @@ npm install fetch-retry --save
 ```
 
 ## Example
-
-`fetch-retry` works the same way as `fetch`, but also accepts a `retries` property on the options argument. If `retries` is not specified, it will default to using 3 retries.
+`fetch-retry` works the same way as `fetch`, but also accepts `retries` and `retryDelay` on the options object. If omitted, they will default to 3 retries with a retry delay of 1000 ms.
 
 ```javascript
 var fetch = require('fetch-retry');
@@ -17,9 +18,9 @@ var fetch = require('fetch-retry');
 
 ```javascript
 fetch(url, {
-    retries: 5,
-    timeout: 1500
-    })
+    retries: 3,
+    timeout: 1000
+  })
   .then(function(response) {
     return response.json();
   })
@@ -28,8 +29,6 @@ fetch(url, {
     console.log(json);
   });
 ```
-
-
 
 ### Caveats
 

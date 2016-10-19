@@ -328,13 +328,13 @@ describe('fetch-retry', function() {
 
   });
 
-  describe('when #options.timeout is provided', function() {
+  describe('when #options.retryDelay is provided', function() {
 
     var options;
 
     beforeEach(function() {
       options = {
-        timeout: 5000
+        retryDelay: 5000
       };
 
       thenCallback = sinon.spy();
@@ -352,7 +352,7 @@ describe('fetch-retry', function() {
       describe('after specified time', function() {
 
         beforeEach(function() {
-          clock.tick(options.timeout);
+          clock.tick(options.retryDelay);
         });
 
         it('invokes fetch again', function() {

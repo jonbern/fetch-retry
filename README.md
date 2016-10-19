@@ -1,7 +1,10 @@
 # fetch-retry
+
 Adds retry functionality to the `Fetch` API.
 
 It wraps [isomorphic-fetch](https://github.com/matthew-andrews/isomoretries) and retries requests that fail due to network issues.
+
+[![Build Status](https://travis-ci.org/jonbern/fetch-retry.svg?branch=master)](https://travis-ci.org/jonbern/fetch-retry)
 
 ## npm package
 

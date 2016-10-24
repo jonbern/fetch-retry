@@ -22,7 +22,7 @@ var fetch = require('fetch-retry');
 ```javascript
 fetch(url, {
     retries: 3,
-    timeout: 1000
+    retryDelay: 1000
   })
   .then(function(response) {
     return response.json();

@@ -17,7 +17,7 @@
   "author": "Jon K. Bernhardsen",
   "license": "MIT",
   "dependencies": {
-    "bluebird": "^3.3.4",
+    "es6-promise": "^4.1.0",
     "isomorphic-fetch": "^2.2.1"
   },
   "devDependencies": {

@@ -2,7 +2,7 @@
 var proxyquire = require('proxyquire').noPreserveCache();
 var sinon = require('sinon');
 var expect = require('expectations');
-var Promise = require('bluebird');
+var Promise = require('es6-promise');
 
 describe('fetch-retry', function() {
 

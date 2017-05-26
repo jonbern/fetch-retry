@@ -13,7 +13,7 @@ npm install fetch-retry --save
 ```
 
 ## Example
-`fetch-retry` is used the same way as `fetch`, but in addition also accepts `retries` and `retryDelay` on the `options` argument. When omitted it will default to 3 retries with a 1000ms retry delay.
+`fetch-retry` is used the same way as `fetch`, but also accepts `retries` and `retryDelay` on the optional `init` object. When omitted these will default to 3 retries and a 1000ms retry delay.
 
 ```javascript
 var fetch = require('fetch-retry');

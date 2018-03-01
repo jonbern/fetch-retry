@@ -45,7 +45,7 @@ describe('fetch-retry', function() {
       'isomorphic-fetch': fetch
     };
 
-    fetchRetry = proxyquire('./', stubs);
+    fetchRetry = proxyquire('../../', stubs);
   });
 
   describe('#url', function() {

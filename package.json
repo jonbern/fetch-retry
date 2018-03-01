@@ -5,7 +5,8 @@
   "repository": "https://github.com/jonbern/fetch-retry.git",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests.js"
+    "test": "mocha test/**/**.js",
+    "integration-test": "mocha test/integration/"
   },
   "keywords": [
     "fetch",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "expectations": "^0.5.2",
+    "express": "^4.16.2",
     "mocha": "^2.4.5",
     "proxyquire": "^1.7.4",
     "sinon": "^1.17.3"

@@ -19,6 +19,7 @@ module.exports = function(url, options) {
     var wrappedFetch = function(n) {
       fetch(url, options)
         .then(function(response) {
+          if (!response.ok) throw new Error();
           resolve(response);
         })
         .catch(function(error) {

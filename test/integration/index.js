@@ -136,7 +136,7 @@ describe('fetch-retry integration tests', () => {
         return setupResponses(responses);
       });
 
-      it('retries the request #retries times', () => {
+      it('retries the request up to #retries times', () => {
         const url = baseUrl;
 
         const options = {

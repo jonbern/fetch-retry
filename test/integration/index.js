@@ -1,5 +1,8 @@
 'use strict';
-const sinon = require('sinon');
+const chai = require("chai");
+const chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
+const should = chai.should();
 const expect = require('expectations');
 const childProcess = require('child_process');
 const fetchRetry = require('../../');
@@ -16,6 +19,12 @@ describe('fetch-retry integration tests', () => {
     });
   });
 
+  // beforeEach(done => {
+  //   clearCallCount().then(() => {
+  //     done();
+  //   });
+  // });
+
   after(done => {
     return fetchRetry(baseUrl + '/stop', {
       method: 'POST'
@@ -25,14 +34,18 @@ describe('fetch-retry integration tests', () => {
     });
   });
 
-  const clearCallCount = () => {
+  const setupResponses = (responses) => {
     return fetchRetry(baseUrl, {
-      method: 'DELETE'
+      method: 'POST',
+      body: JSON.stringify(responses),
+      headers: {
+        'content-type': 'application/json'
+      }
     });
   };
 
   const getCallCount = () => {
-    return fetchRetry(baseUrl)
+    return fetchRetry(`${baseUrl}/calls`)
       .then(response => {
         return response.text();
       })
@@ -41,83 +54,158 @@ describe('fetch-retry integration tests', () => {
       });
   }
 
-  describe('when endpoint returns 200', () => {
+  [200, 503, 404].forEach(statusCode => {
 
-    beforeEach(done => {
-      clearCallCount().then(() => {
-        done();
+    describe('when endpoint returns ' + statusCode, () => {
+  
+      before(() => {
+        return setupResponses([statusCode]);
       });
+  
+      it('does not retry request', () => {
+        return fetchRetry(baseUrl)
+          .then(getCallCount)
+          .should.eventually.equal(1);
+      });
+  
     });
 
-    it('does not retry request', done => {
-      const url = `${baseUrl}/200`;
-      fetchRetry(url)
-        .then(response => {
-          expect(response.status).toBe(200);
-          expect(response.ok).toBe(true);
-          return getCallCount();
-        })
-        .then(callCount => {
-          expect(callCount).toBe(1);
-          done();
-        })
-        .catch(err => {
-          console.log(err);
-        });
+  });
+  
+  describe('when configured to retry on a specific HTTP code', () => {
+
+    describe('and it never succeeds', () => {
+
+      const retryOn = [503]
+
+      beforeEach(() => {
+        return setupResponses([503, 503, 503, 503]);
+      });
+
+      it('retries the request #retries times', () => {
+        const url = baseUrl;
+
+        const options = {
+          retries: 3,
+          retryDelay: 100,
+          retryOn
+        }
+
+        const expectedCallCount = options.retries + 1;
+
+        return fetchRetry(url, options)
+          .catch(getCallCount)
+          .should.eventually.equal(expectedCallCount);
+      });
+
+      it('eventually rejects promise with the received response of the last request', () => {
+        const url = baseUrl;
+
+        const options = {
+          retries: 3,
+          retryDelay: 100,
+          retryOn
+        }
+
+        const expectedResponse = {
+          status: 503,
+          ok: false
+        }
+
+        return fetchRetry(url, options)
+          .catch(response => {
+            return {
+              status: response.status,
+              ok: response.ok
+            };
+          })
+          .should.become(expectedResponse);
+      });
+
+    });
+
+    describe('and it eventually succeeds', () => {
+
+      const retryOnStatus = 503
+      const responses = [503, 503, 200];
+      const requestsToRetry = responses
+          .filter(response => response === retryOnStatus)
+          .length;
+
+      beforeEach(() => {
+        return setupResponses(responses);
+      });
+
+      it('retries the request #retries times', () => {
+        const url = baseUrl;
+
+        const options = {
+          retries: 3,
+          retryDelay: 100,
+          retryOn: [retryOnStatus]
+        }
+
+        const expectedCallCount = requestsToRetry + 1;
+
+        return fetchRetry(url, options)
+          .then(getCallCount)
+          .should.eventually.equal(expectedCallCount);
+      });
+
+      it('eventually resolves the promise with the received response of the last request', () => {
+        const url = baseUrl;
+
+        const options = {
+          retries: 3,
+          retryDelay: 100,
+          retryOn: [retryOnStatus]
+        }
+
+        const expectedResponse = {
+          status: 200,
+          ok: true
+        }
+
+        return fetchRetry(url, options)
+          .then(response => {
+            return {
+              status: response.status,
+              ok: response.ok
+            };
+          })
+          .should.become(expectedResponse);
+      });
+
     });
 
   });
 
-  describe('when endpoint returns 503', () => {
+  describe('when configured to retry on a set of HTTP codes', () => {
 
-    beforeEach(done => {
-      clearCallCount().then(() => {
-        done();
+    describe('and it never succeeds', () => {
+
+      const retryOn = [503, 404]
+
+      beforeEach(() => {
+        return setupResponses([503, 404, 404, 503]);
       });
-    });
 
-    it('does not retry request', done => {
-      const url = `${baseUrl}/503`;
-      fetchRetry(url)
-        .then(response => {
-          expect(response.status).toBe(503);
-          expect(response.ok).toBe(false);
-          return getCallCount();
-        })
-        .then(callCount => {
-          expect(callCount).toBe(1);
-          done();
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    });
+      it('retries the request #retries times', () => {
+        const url = baseUrl;
 
-  });
+        const options = {
+          retries: 3,
+          retryDelay: 100,
+          retryOn
+        }
 
-  describe('when endpoint returns 404', () => {
+        const expectedCallCount = options.retries + 1;
 
-    beforeEach(done => {
-      clearCallCount().then(() => {
-        done();
+        return fetchRetry(url, options)
+          .catch(getCallCount)
+          .should.eventually.equal(expectedCallCount);
       });
-    });
 
-    it('does not retry request', done => {
-      const url = `${baseUrl}/404`;
-      fetchRetry(url)
-        .then(response => {
-          expect(response.status).toBe(404);
-          expect(response.ok).toBe(false);
-          return getCallCount();
-        })
-        .then(callCount => {
-          expect(callCount).toBe(1);
-          done();
-        })
-        .catch(err => {
-          console.log(err);
-        });
     });
 
   });

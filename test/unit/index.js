@@ -64,7 +64,7 @@ describe('fetch-retry', function() {
 
   describe('#options', function() {
 
-    describe('when #options are valid', function() {
+    describe('when #options is provided', function() {
 
       var options;
 
@@ -81,9 +81,23 @@ describe('fetch-retry', function() {
         expect(fetch.getCall(0).args[1]).toEqual(options);
       });
 
+      describe('when #options.retryOn is not an array', () => {
+
+        it('throws exception', () => {
+          expect(function() {
+            options.retryOn = 503;
+            fetchRetry('http://someUrl', options);
+          }).toThrow({
+            name: 'ArgumentError',
+            message: 'retryOn property expects an array'
+          });
+        });
+
+      });
+
     });
 
-    describe('when #options are undefined or null', function() {
+    describe('when #options is undefined or null', function() {
 
       [undefined, null].forEach(function(testCase) {
 
@@ -115,7 +129,7 @@ describe('fetch-retry', function() {
     describe('when first call is a success', function() {
 
       beforeEach(function() {
-        deferred1.resolve();
+        deferred1.resolve({ status: 200 });
       });
 
       describe('when resolved', function() {
@@ -142,7 +156,7 @@ describe('fetch-retry', function() {
 
         beforeEach(function() {
           clock.tick(delay);
-          deferred2.resolve();
+          deferred2.resolve({ status: 200 });
         });
 
         describe('when resolved', function() {
@@ -169,7 +183,7 @@ describe('fetch-retry', function() {
         describe('when third call is a success', function() {
 
           beforeEach(function() {
-            deferred3.resolve();
+            deferred3.resolve({ status: 200 });
             clock.tick(delay);
           });
 
@@ -197,7 +211,7 @@ describe('fetch-retry', function() {
           describe('when fourth call is a success', function() {
 
             beforeEach(function() {
-              deferred4.resolve();
+              deferred4.resolve({ status: 200 });
               clock.tick(delay);
             });
 
@@ -258,7 +272,7 @@ describe('fetch-retry', function() {
     describe('when first call is a success', function() {
 
       beforeEach(function() {
-        deferred1.resolve();
+        deferred1.resolve({ status: 200 });
       });
 
       describe('when resolved', function() {
@@ -285,7 +299,7 @@ describe('fetch-retry', function() {
       describe('when second call is a succcess', function() {
 
         beforeEach(function() {
-          deferred2.resolve();
+          deferred2.resolve({ status: 200 });
           clock.tick(delay);
         });
 
@@ -331,10 +345,12 @@ describe('fetch-retry', function() {
   describe('when #options.retryDelay is provided', function() {
 
     var options;
+    var retryDelay;
 
     beforeEach(function() {
+      retryDelay = 5000;
       options = {
-        retryDelay: 5000
+        retryDelay: retryDelay
       };
 
       thenCallback = sinon.spy();
@@ -352,7 +368,7 @@ describe('fetch-retry', function() {
       describe('after specified time', function() {
 
         beforeEach(function() {
-          clock.tick(options.retryDelay);
+          clock.tick(retryDelay);
         });
 
         it('invokes fetch again', function() {

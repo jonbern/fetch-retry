@@ -19,12 +19,6 @@ describe('fetch-retry integration tests', () => {
     });
   });
 
-  // beforeEach(done => {
-  //   clearCallCount().then(() => {
-  //     done();
-  //   });
-  // });
-
   after(done => {
     return fetchRetry(baseUrl + '/stop', {
       method: 'POST'

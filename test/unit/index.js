@@ -1,4 +1,5 @@
 'use strict';
+require('isomorphic-fetch');
 var proxyquire = require('proxyquire').noPreserveCache();
 var sinon = require('sinon');
 var expect = require('expectations');
@@ -7,7 +8,6 @@ var Promise = require('es6-promise');
 describe('fetch-retry', function() {
 
   var fetchRetry;
-  var fetch;
 
   var deferred1;
   var deferred2;

@@ -1,6 +1,6 @@
 'use strict';
-var fetch = require('isomorphic-fetch');
-var Promise = require('es6-promise');
+require('isomorphic-fetch');
+require('es6-promise').polyfill();
 
 module.exports = function(url, options) {
   var retries = 3;

@@ -2,7 +2,7 @@
 
 Adds retry functionality to the `Fetch` API.
 
-It wraps [isomorphic-fetch](https://github.com/matthew-andrews/isomoretries) and retries requests that fail due to network issues. It can also be configured to retry requests on specific HTTP status codes.
+It wraps [isomorphic-fetch](https://github.com/matthew-andrews/isomorphic-fetch) and retries requests that fail due to network issues. It can also be configured to retry requests on specific HTTP status codes.
 
 [![Build Status](https://travis-ci.org/jonbern/fetch-retry.svg?branch=master)](https://travis-ci.org/jonbern/fetch-retry)
 

@@ -36,7 +36,7 @@ module.exports = function(url, options) {
             if (n > 0) {
               retry(n);
             } else {
-              reject(response);
+              resolve(response);
             }
           }
         })

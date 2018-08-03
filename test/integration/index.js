@@ -2,8 +2,7 @@
 const chai = require("chai");
 const chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
-const should = chai.should();
-const expect = require('expectations');
+chai.should();
 const childProcess = require('child_process');
 const fetchRetry = require('../../');
 
@@ -19,12 +18,9 @@ describe('fetch-retry integration tests', () => {
     });
   });
 
-  after(done => {
+  after(() => {
     return fetchRetry(baseUrl + '/stop', {
       method: 'POST'
-    })
-    .then(() => {
-      done();
     });
   });
 
@@ -77,8 +73,6 @@ describe('fetch-retry integration tests', () => {
       });
 
       it('retries the request #retries times', () => {
-        const url = baseUrl;
-
         const options = {
           retries: 3,
           retryDelay: 100,
@@ -87,14 +81,12 @@ describe('fetch-retry integration tests', () => {
 
         const expectedCallCount = options.retries + 1;
 
-        return fetchRetry(url, options)
-          .catch(getCallCount)
+        return fetchRetry(baseUrl, options)
+          .then(getCallCount)
           .should.eventually.equal(expectedCallCount);
       });
 
-      it('eventually rejects promise with the received response of the last request', () => {
-        const url = baseUrl;
-
+      it('eventually resolves the promise with the response of the last request', () => {
         const options = {
           retries: 3,
           retryDelay: 100,
@@ -106,8 +98,8 @@ describe('fetch-retry integration tests', () => {
           ok: false
         }
 
-        return fetchRetry(url, options)
-          .catch(response => {
+        return fetchRetry(baseUrl, options)
+          .then(response => {
             return {
               status: response.status,
               ok: response.ok
@@ -131,8 +123,6 @@ describe('fetch-retry integration tests', () => {
       });
 
       it('retries the request up to #retries times', () => {
-        const url = baseUrl;
-
         const options = {
           retries: 3,
           retryDelay: 100,
@@ -141,14 +131,12 @@ describe('fetch-retry integration tests', () => {
 
         const expectedCallCount = requestsToRetry + 1;
 
-        return fetchRetry(url, options)
+        return fetchRetry(baseUrl, options)
           .then(getCallCount)
           .should.eventually.equal(expectedCallCount);
       });
 
       it('eventually resolves the promise with the received response of the last request', () => {
-        const url = baseUrl;
-
         const options = {
           retries: 3,
           retryDelay: 100,
@@ -160,7 +148,7 @@ describe('fetch-retry integration tests', () => {
           ok: true
         }
 
-        return fetchRetry(url, options)
+        return fetchRetry(baseUrl, options)
           .then(response => {
             return {
               status: response.status,
@@ -185,8 +173,6 @@ describe('fetch-retry integration tests', () => {
       });
 
       it('retries the request #retries times', () => {
-        const url = baseUrl;
-
         const options = {
           retries: 3,
           retryDelay: 100,
@@ -195,8 +181,8 @@ describe('fetch-retry integration tests', () => {
 
         const expectedCallCount = options.retries + 1;
 
-        return fetchRetry(url, options)
-          .catch(getCallCount)
+        return fetchRetry(baseUrl, options)
+          .then(getCallCount)
           .should.eventually.equal(expectedCallCount);
       });
 

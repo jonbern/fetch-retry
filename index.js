@@ -22,7 +22,7 @@ module.exports = function(url, options) {
       throw {
         name: 'ArgumentError',
         message: 'retryOn property expects an array'
-      }
+      };
     }
   }
 
@@ -51,8 +51,8 @@ module.exports = function(url, options) {
 
     function retry(n) {
       setTimeout(function() {
-          wrappedFetch(--n);
-        }, retryDelay);
+        wrappedFetch(--n);
+      }, retryDelay);
     }
 
     wrappedFetch(retries);

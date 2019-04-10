@@ -1,6 +1,6 @@
 'use strict';
-const chai = require("chai");
-const chaiAsPromised = require("chai-as-promised");
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 chai.should();
 const childProcess = require('child_process');
@@ -42,31 +42,31 @@ describe('fetch-retry integration tests', () => {
       .then(text => {
         return Number.parseInt(text);
       });
-  }
+  };
 
   [200, 503, 404].forEach(statusCode => {
 
     describe('when endpoint returns ' + statusCode, () => {
-  
+
       before(() => {
         return setupResponses([statusCode]);
       });
-  
+
       it('does not retry request', () => {
         return fetchRetry(baseUrl)
           .then(getCallCount)
           .should.eventually.equal(1);
       });
-  
+
     });
 
   });
-  
+
   describe('when configured to retry on a specific HTTP code', () => {
 
     describe('and it never succeeds', () => {
 
-      const retryOn = [503]
+      const retryOn = [503];
 
       beforeEach(() => {
         return setupResponses([503, 503, 503, 503]);
@@ -77,7 +77,7 @@ describe('fetch-retry integration tests', () => {
           retries: 3,
           retryDelay: 100,
           retryOn
-        }
+        };
 
         const expectedCallCount = options.retries + 1;
 
@@ -91,12 +91,12 @@ describe('fetch-retry integration tests', () => {
           retries: 3,
           retryDelay: 100,
           retryOn
-        }
+        };
 
         const expectedResponse = {
           status: 503,
           ok: false
-        }
+        };
 
         return fetchRetry(baseUrl, options)
           .then(response => {
@@ -112,11 +112,11 @@ describe('fetch-retry integration tests', () => {
 
     describe('and it eventually succeeds', () => {
 
-      const retryOnStatus = 503
+      const retryOnStatus = 503;
       const responses = [503, 503, 200];
       const requestsToRetry = responses
-          .filter(response => response === retryOnStatus)
-          .length;
+        .filter(response => response === retryOnStatus)
+        .length;
 
       beforeEach(() => {
         return setupResponses(responses);
@@ -127,7 +127,7 @@ describe('fetch-retry integration tests', () => {
           retries: 3,
           retryDelay: 100,
           retryOn: [retryOnStatus]
-        }
+        };
 
         const expectedCallCount = requestsToRetry + 1;
 
@@ -141,12 +141,12 @@ describe('fetch-retry integration tests', () => {
           retries: 3,
           retryDelay: 100,
           retryOn: [retryOnStatus]
-        }
+        };
 
         const expectedResponse = {
           status: 200,
           ok: true
-        }
+        };
 
         return fetchRetry(baseUrl, options)
           .then(response => {
@@ -166,7 +166,7 @@ describe('fetch-retry integration tests', () => {
 
     describe('and it never succeeds', () => {
 
-      const retryOn = [503, 404]
+      const retryOn = [503, 404];
 
       beforeEach(() => {
         return setupResponses([503, 404, 404, 503]);
@@ -177,7 +177,7 @@ describe('fetch-retry integration tests', () => {
           retries: 3,
           retryDelay: 100,
           retryOn
-        }
+        };
 
         const expectedCallCount = options.retries + 1;
 

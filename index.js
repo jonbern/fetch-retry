@@ -7,11 +7,11 @@ module.exports = function(url, options) {
   var retryDelay = 1000;
   var retryOn = [];
 
-  if (options && options.retries) {
+  if (options && options.retries != null) {
     retries = options.retries;
   }
 
-  if (options && options.retryDelay) {
+  if (options && options.retryDelay != null) {
     retryDelay = options.retryDelay;
   }
 

@@ -342,6 +342,60 @@ describe('fetch-retry', function() {
 
   });
 
+  describe('when #options.retries=0', function() {
+
+    beforeEach(function() {
+      thenCallback = sinon.spy();
+      catchCallback = sinon.spy();
+
+      fetchRetry('http://someurl', { retries: 0 })
+        .then(thenCallback)
+        .catch(catchCallback);
+    });
+
+    describe('when first call is a success', function() {
+
+      beforeEach(function() {
+        deferred1.resolve({ status: 200 });
+      });
+
+      describe('when resolved', function() {
+
+        it('invokes the then callback', function() {
+          expect(thenCallback.called).toBe(true);
+        });
+
+        it('calls fetch once', function() {
+          expect(fetch.callCount).toBe(1);
+        });
+
+      });
+
+    });
+
+    describe('when first call is a failure', function() {
+
+      beforeEach(function() {
+        deferred1.reject();
+        clock.tick(delay);
+      });
+
+      describe('when rejected', function() {
+
+        it('invokes the catch callback', function() {
+          expect(catchCallback.called).toBe(true);
+        });
+
+        it('does not call fetch again', function() {
+          expect(fetch.callCount).toBe(1);
+        });
+
+      });
+
+    });
+
+  });
+
   describe('when #options.retryDelay is provided', function() {
 
     var options;
@@ -385,6 +439,45 @@ describe('fetch-retry', function() {
 
         it('does not invoke fetch again', function() {
           expect(fetch.callCount).toBe(1);
+        });
+
+      });
+
+    });
+
+  });
+
+  describe('when #options.retryDelay is zero', function() {
+
+    var options;
+    var retryDelay;
+
+    beforeEach(function() {
+      retryDelay = 0;
+      options = {
+        retryDelay: retryDelay
+      };
+
+      thenCallback = sinon.spy();
+
+      fetchRetry('http://someUrl', options)
+        .then(thenCallback);
+    });
+
+    describe('when first call is unsuccessful', function() {
+
+      beforeEach(function() {
+        deferred1.reject();
+      });
+
+      describe('after specified time', function() {
+
+        beforeEach(function() {
+          clock.tick(retryDelay);
+        });
+
+        it('invokes fetch again', function() {
+          expect(fetch.callCount).toBe(2);
         });
 
       });

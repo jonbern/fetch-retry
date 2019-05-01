@@ -400,49 +400,55 @@ describe('fetch-retry', function() {
 
   });
 
-  describe('when #options.retryDelay is provided', function() {
+  [
+    [undefined, 1000],
+    [null, 1000],
+    [5000, 5000]
+  ].forEach(function([retryDelay, actualDelay]) {
 
-    var options;
-    var retryDelay;
+    describe('when #options.retryDelay is ' + retryDelay, function() {
 
-    beforeEach(function() {
-      retryDelay = 5000;
-      options = {
-        retryDelay: retryDelay
-      };
-
-      thenCallback = sinon.spy();
-
-      fetchRetry('http://someUrl', options)
-        .then(thenCallback)
-    });
-
-    describe('when first call is unsuccessful', function() {
+      var options;
 
       beforeEach(function() {
-        deferred1.reject();
+        options = {
+          retryDelay: retryDelay
+        };
+
+        thenCallback = sinon.spy();
+
+        fetchRetry('http://someUrl', options)
+          .then(thenCallback)
       });
 
-      describe('after specified time', function() {
+      describe('when first call is unsuccessful', function() {
 
         beforeEach(function() {
-          clock.tick(retryDelay);
+          deferred1.reject();
         });
 
-        it('invokes fetch again', function() {
-          expect(fetch.callCount).toBe(2);
+        describe('after specified time', function() {
+
+          beforeEach(function() {
+            clock.tick(actualDelay);
+          });
+
+          it('invokes fetch again', function() {
+            expect(fetch.callCount).toBe(2);
+          });
+
         });
 
-      });
+        describe('after less than specified time', function() {
 
-      describe('after less than specified time', function() {
+          beforeEach(function() {
+            clock.tick(actualDelay / 2);
+          });
 
-        beforeEach(function() {
-          clock.tick(1000);
-        });
+          it('does not invoke fetch again', function() {
+            expect(fetch.callCount).toBe(1);
+          });
 
-        it('does not invoke fetch again', function() {
-          expect(fetch.callCount).toBe(1);
         });
 
       });

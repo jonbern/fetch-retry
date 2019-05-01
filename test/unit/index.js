@@ -115,48 +115,23 @@ describe('fetch-retry', function() {
 
   });
 
-  describe('when #options.retries=3 (default)', function() {
+  [undefined, null, 3].forEach(function(testCase) {
 
-    beforeEach(function() {
-      thenCallback = sinon.spy();
-      catchCallback = sinon.spy();
-
-      fetchRetry('http://someurl')
-        .then(thenCallback)
-        .catch(catchCallback);
-    });
-
-    describe('when first call is a success', function() {
+    describe('when #options.retries=' + testCase, function() {
 
       beforeEach(function() {
-        deferred1.resolve({ status: 200 });
+        thenCallback = sinon.spy();
+        catchCallback = sinon.spy();
+
+        fetchRetry('http://someurl', { retries: testCase })
+          .then(thenCallback)
+          .catch(catchCallback);
       });
 
-      describe('when resolved', function() {
-
-        it('invokes the then callback', function() {
-          expect(thenCallback.called).toBe(true);
-        });
-
-        it('calls fetch once', function() {
-          expect(fetch.callCount).toBe(1);
-        });
-
-      });
-
-    });
-
-    describe('when first call is a failure', function() {
-
-      beforeEach(function() {
-        deferred1.reject();
-      });
-
-      describe('when second call is a succcess', function() {
+      describe('when first call is a success', function() {
 
         beforeEach(function() {
-          clock.tick(delay);
-          deferred2.resolve({ status: 200 });
+          deferred1.resolve({ status: 200 });
         });
 
         describe('when resolved', function() {
@@ -165,26 +140,25 @@ describe('fetch-retry', function() {
             expect(thenCallback.called).toBe(true);
           });
 
-          it('calls fetch twice', function() {
-            expect(fetch.callCount).toBe(2);
+          it('calls fetch once', function() {
+            expect(fetch.callCount).toBe(1);
           });
 
         });
 
       });
 
-      describe('when second call is a failure', function() {
+      describe('when first call is a failure', function() {
 
         beforeEach(function() {
-          deferred2.reject();
-          clock.tick(delay);
+          deferred1.reject();
         });
 
-        describe('when third call is a success', function() {
+        describe('when second call is a succcess', function() {
 
           beforeEach(function() {
-            deferred3.resolve({ status: 200 });
             clock.tick(delay);
+            deferred2.resolve({ status: 200 });
           });
 
           describe('when resolved', function() {
@@ -193,25 +167,25 @@ describe('fetch-retry', function() {
               expect(thenCallback.called).toBe(true);
             });
 
-            it('calls fetch three times', function() {
-              expect(fetch.callCount).toBe(3);
+            it('calls fetch twice', function() {
+              expect(fetch.callCount).toBe(2);
             });
 
           });
 
         });
 
-        describe('when third call is a failure', function() {
+        describe('when second call is a failure', function() {
 
           beforeEach(function() {
-            deferred3.reject();
+            deferred2.reject();
             clock.tick(delay);
           });
 
-          describe('when fourth call is a success', function() {
+          describe('when third call is a success', function() {
 
             beforeEach(function() {
-              deferred4.resolve({ status: 200 });
+              deferred3.resolve({ status: 200 });
               clock.tick(delay);
             });
 
@@ -221,29 +195,59 @@ describe('fetch-retry', function() {
                 expect(thenCallback.called).toBe(true);
               });
 
-              it('calls fetch four times', function() {
-                expect(fetch.callCount).toBe(4);
+              it('calls fetch three times', function() {
+                expect(fetch.callCount).toBe(3);
               });
 
             });
 
           });
 
-          describe('when fourth call is a failure', function() {
+          describe('when third call is a failure', function() {
 
             beforeEach(function() {
-              deferred4.reject();
+              deferred3.reject();
               clock.tick(delay);
             });
 
-            describe('when rejected', function() {
+            describe('when fourth call is a success', function() {
 
-              it('invokes the catch callback', function() {
-                expect(catchCallback.called).toBe(true);
+              beforeEach(function() {
+                deferred4.resolve({ status: 200 });
+                clock.tick(delay);
               });
 
-              it('does not call fetch again', function() {
-                expect(fetch.callCount).toBe(4);
+              describe('when resolved', function() {
+
+                it('invokes the then callback', function() {
+                  expect(thenCallback.called).toBe(true);
+                });
+
+                it('calls fetch four times', function() {
+                  expect(fetch.callCount).toBe(4);
+                });
+
+              });
+
+            });
+
+            describe('when fourth call is a failure', function() {
+
+              beforeEach(function() {
+                deferred4.reject();
+                clock.tick(delay);
+              });
+
+              describe('when rejected', function() {
+
+                it('invokes the catch callback', function() {
+                  expect(catchCallback.called).toBe(true);
+                });
+
+                it('does not call fetch again', function() {
+                  expect(fetch.callCount).toBe(4);
+                });
+
               });
 
             });

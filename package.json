@@ -18,17 +18,17 @@
   "author": "Jon K. Bernhardsen",
   "license": "MIT",
   "dependencies": {
-    "es6-promise": "^4.2.4",
+    "es6-promise": "^4.2.6",
     "isomorphic-fetch": "^2.2.1"
   },
   "devDependencies": {
-    "body-parser": "^1.18.3",
-    "chai": "^4.1.2",
+    "body-parser": "^1.19.0",
+    "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "expectations": "^0.7.1",
-    "express": "^4.16.2",
+    "express": "^4.16.4",
     "mocha": "^5.2.0",
-    "proxyquire": "^2.0.1",
-    "sinon": "^6.1.4"
+    "proxyquire": "^2.1.0",
+    "sinon": "^6.3.5"
   }
 }

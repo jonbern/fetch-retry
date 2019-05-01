@@ -16,45 +16,61 @@ module.exports = function(url, options) {
   }
 
   if (options && options.retryOn) {
-    if (options.retryOn instanceof Array) {
+    if (Array.isArray(options.retryOn)) {
+      retryOn = options.retryOn;
+    } else if (typeof options.retryOn === 'function') {
       retryOn = options.retryOn;
     } else {
       throw {
         name: 'ArgumentError',
-        message: 'retryOn property expects an array'
+        message: 'retryOn property expects an array or function'
       };
     }
   }
 
   return new Promise(function(resolve, reject) {
-    var wrappedFetch = function(n) {
+    var wrappedFetch = function(attempt) {
       fetch(url, options)
         .then(function(response) {
-          if (retryOn.indexOf(response.status) === -1) {
+          if (Array.isArray(retryOn) && retryOn.indexOf(response.status) === -1) {
             resolve(response);
+          } else if (typeof retryOn === 'function') {
+            if (retryOn(attempt, null, response)) {
+              retry(attempt, null, response);
+            } else {
+              resolve(response);
+            }
           } else {
-            if (n > 0) {
-              retry(n);
+            if (attempt < retries) {
+              retry(attempt, null, response);
             } else {
               resolve(response);
             }
           }
         })
         .catch(function(error) {
-          if (n > 0) {
-            retry(n);
+          if (typeof retryOn === 'function') {
+            if (retryOn(attempt, error, null)) {
+              retry(attempt, error, null);
+            } else {
+              reject(error);
+            }
+          } else if (attempt < retries) {
+            retry(attempt, error, null);
           } else {
             reject(error);
           }
         });
     };
 
-    function retry(n) {
+    function retry(attempt, error, response) {
+      var delay = (typeof retryDelay === 'function') ?
+        retryDelay(attempt, error, response) : retryDelay;
       setTimeout(function() {
-        wrappedFetch(--n);
-      }, retryDelay);
+        wrappedFetch(++attempt);
+      }, delay);
     }
 
-    wrappedFetch(retries);
+    wrappedFetch(0);
   });
 };

@@ -74,7 +74,7 @@ The `retryOn` option may also be specified as a function, in which case it will 
 fetch(url, {
     retryOn: function(attempt, error, response) {
       // retry on any network error, or 4xx or 5xx status codes
-      if (error !== null || response.status >= 400;) {
+      if (error !== null || response.status >= 400) {
         console.log(`retrying, attempt number ${attempt + 1}`);
         return true;
       }

@@ -399,7 +399,7 @@ describe('fetch-retry', function() {
     var retryDelay;
 
     beforeEach(function() {
-      retryDelay = sinon.spy(() => 5000);
+      retryDelay = sinon.stub().returns(5000);
       options = {
         retryDelay: retryDelay
       };
@@ -428,6 +428,7 @@ describe('fetch-retry', function() {
           expect(retryDelay.lastCall.args[0]).toEqual(0);
           expect(retryDelay.lastCall.args[1].message).toEqual('first error');
         });
+
 
       });
 
@@ -465,44 +466,103 @@ describe('fetch-retry', function() {
     var retryOn;
 
     beforeEach(function() {
-      retryOn = sinon.spy(() => true);
+      retryOn = sinon.stub();
       options = {
         retryOn: retryOn
       };
 
-      fetchRetry('http://someUrl', options);
+      thenCallback = sinon.spy();
+      catchCallback = sinon.spy();
+
+      fetchRetry('http://someUrl', options)
+        .then(thenCallback)
+        .catch((catchCallback));
     });
 
-    describe('when first attempt is unsuccessful', function() {
+    describe('when first attempt is rejected due to network error', function() {
 
-      beforeEach(function() {
-        deferred1.reject(new Error('first error'));
-      });
-
-      describe('when rejected', function() {
-
-        it('invokes the retryOn function with an error', function() {
-          expect(retryOn.called).toBe(true);
-          expect(retryOn.lastCall.args.length).toBe(3);
-          expect(retryOn.lastCall.args[0]).toBe(0);
-          expect(retryOn.lastCall.args[1] instanceof Error).toBe(true);
-          expect(retryOn.lastCall.args[2]).toBe(null);
-        });
-
-      });
-
-      describe('when the second call is unsuccessful', function() {
+      describe('when #retryOn() returns true', () => {
 
         beforeEach(function() {
-          deferred2.reject(new Error('second error'));
-          clock.tick(delay);
+          retryOn.returns(true);
+          deferred1.reject(new Error('first error'));
         });
 
         describe('when rejected', function() {
 
-          it('invokes the retryOn function twice', function() {
-            expect(retryOn.callCount).toBe(2);
-            expect(retryOn.lastCall.args[0]).toBe(1);
+          it('invokes #retryOn function with an error', function() {
+            expect(retryOn.called).toBe(true);
+            expect(retryOn.lastCall.args.length).toBe(3);
+            expect(retryOn.lastCall.args[0]).toBe(0);
+            expect(retryOn.lastCall.args[1] instanceof Error).toBe(true);
+            expect(retryOn.lastCall.args[2]).toBe(null);
+          });
+
+          describe('after specified time', function() {
+
+            beforeEach(function() {
+              clock.tick(delay);
+            });
+
+            it('invokes fetch again', function() {
+              expect(fetch.callCount).toBe(2);
+            });
+
+            describe('when the second call is unsuccessful', function() {
+
+              beforeEach(function() {
+                deferred2.reject(new Error('second error'));
+                clock.tick(delay);
+              });
+
+              describe('when rejected', function() {
+
+                it('invokes the #retryOn function twice', function() {
+                  expect(retryOn.callCount).toBe(2);
+                  expect(retryOn.lastCall.args[0]).toBe(1);
+                });
+
+              });
+
+            });
+
+          });
+
+        });
+
+      });
+
+      describe('when #retryOn() returns false', () => {
+
+        beforeEach(function() {
+          retryOn.returns(false);
+          deferred1.reject(new Error('first error'));
+        });
+
+        describe('when rejected', function() {
+
+          it('invokes #retryOn function with an error', function() {
+            expect(retryOn.called).toBe(true);
+            expect(retryOn.lastCall.args.length).toBe(3);
+            expect(retryOn.lastCall.args[0]).toBe(0);
+            expect(retryOn.lastCall.args[1] instanceof Error).toBe(true);
+            expect(retryOn.lastCall.args[2]).toBe(null);
+          });
+
+          describe('after specified time', function() {
+
+            beforeEach(function() {
+              clock.tick(delay);
+            });
+
+            it('invokes the catch callback', function() {
+              expect(catchCallback.called).toBe(true);
+            });
+
+            it('does not call fetch again', function() {
+              expect(fetch.callCount).toBe(1);
+            });
+
           });
 
         });
@@ -511,25 +571,63 @@ describe('fetch-retry', function() {
 
     });
 
-    describe('when first attempt is a 502', function() {
+    describe('when first attempt is resolved', function() {
 
-      beforeEach(function() {
-        deferred1.resolve({ status: 502 });
-      });
-
-      describe('when the second call is a success', function() {
+      describe('when #retryOn() returns true', () => {
 
         beforeEach(function() {
-          deferred2.resolve({ status: 200 });
-          clock.tick(delay);
+          retryOn.returns(true);
+          deferred1.resolve({ status: 200 });
         });
 
-        it('invokes the retryOn function with the response', function() {
-          expect(retryOn.called).toBe(true);
-          expect(retryOn.lastCall.args.length).toBe(3);
-          expect(retryOn.lastCall.args[0]).toBe(0);
-          expect(retryOn.lastCall.args[1]).toBe(null);
-          expect(retryOn.lastCall.args[2]).toEqual({ status: 502 });
+        describe('after specified delay', () => {
+
+          beforeEach(function() {
+            clock.tick(delay);
+          });
+
+          it('calls fetch again', function() {
+            expect(fetch.callCount).toBe(2);
+          });
+
+          describe('when second call is resolved', () => {
+
+            beforeEach(function() {
+              deferred2.resolve({ status: 200 });
+              clock.tick(delay);
+            });
+
+            it('invokes the #retryOn function with the response', function() {
+              expect(retryOn.called).toBe(true);
+              expect(retryOn.lastCall.args.length).toBe(3);
+              expect(retryOn.lastCall.args[0]).toBe(0);
+              expect(retryOn.lastCall.args[1]).toBe(null);
+              expect(retryOn.lastCall.args[2]).toEqual({ status: 200 });
+            });
+
+          });
+
+        });
+
+      });
+
+      describe('when #retryOn() returns false', () => {
+
+        beforeEach(function() {
+          retryOn.returns(false);
+          deferred1.resolve({ status: 502 });
+        });
+
+        describe('when resolved', () => {
+
+          it('invokes the then callback', function() {
+            expect(thenCallback.called).toBe(true);
+          });
+
+          it('calls fetch 1 time only', function() {
+            expect(fetch.callCount).toBe(1);
+          });
+
         });
 
       });

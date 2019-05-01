@@ -7,24 +7,27 @@ module.exports = function(url, options) {
   var retryDelay = 1000;
   var retryOn = [];
 
-  if (options && options.retries) {
-    retries = options.retries;
+  if (options && options.retries !== undefined) {
+    if (isPositiveInteger(options.retries)) {
+      retries = options.retries;
+    } else {
+      throw new ArgumentError('retries must be a positive integer');
+    }
   }
 
-  if (options && options.retryDelay) {
-    retryDelay = options.retryDelay;
+  if (options && options.retryDelay !== undefined) {
+    if (isPositiveInteger(options.retryDelay) || (typeof options.retryDelay === 'function')) {
+      retryDelay = options.retryDelay;
+    } else {
+      throw new ArgumentError('retryDelay must be a positive integer or a function returning a positive integer');
+    }
   }
 
   if (options && options.retryOn) {
-    if (Array.isArray(options.retryOn)) {
-      retryOn = options.retryOn;
-    } else if (typeof options.retryOn === 'function') {
+    if (Array.isArray(options.retryOn) || (typeof options.retryOn === 'function')) {
       retryOn = options.retryOn;
     } else {
-      throw {
-        name: 'ArgumentError',
-        message: 'retryOn property expects an array or function'
-      };
+      throw new ArgumentError('retryOn property expects an array or function');
     }
   }
 
@@ -74,3 +77,12 @@ module.exports = function(url, options) {
     wrappedFetch(0);
   });
 };
+
+function isPositiveInteger(value) {
+  return Number.isInteger(value) && value >= 0;
+}
+
+function ArgumentError(message) {
+  this.name = 'ArgumentError';
+  this.message = message;
+}

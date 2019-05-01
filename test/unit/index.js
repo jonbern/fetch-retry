@@ -152,7 +152,7 @@ describe('fetch-retry', function() {
         deferred1.reject();
       });
 
-      describe('when second call is a succcess', function() {
+      describe('when second call is a success', function() {
 
         beforeEach(function() {
           clock.tick(delay);
@@ -296,7 +296,7 @@ describe('fetch-retry', function() {
         clock.tick(delay);
       });
 
-      describe('when second call is a succcess', function() {
+      describe('when second call is a success', function() {
 
         beforeEach(function() {
           deferred2.resolve({ status: 200 });
@@ -524,7 +524,7 @@ describe('fetch-retry', function() {
           clock.tick(delay);
         });
 
-        it('invokes the retryOn function with the resposne', function() {
+        it('invokes the retryOn function with the response', function() {
           expect(retryOn.called).toBe(true);
           expect(retryOn.lastCall.args.length).toBe(3);
           expect(retryOn.lastCall.args[0]).toBe(0);

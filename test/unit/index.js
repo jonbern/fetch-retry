@@ -35,7 +35,7 @@ describe('fetch-retry', function() {
     deferred3 = defer();
     deferred4 = defer();
 
-    fetch = sinon.stub();
+    global.fetch = sinon.stub();
     fetch.onCall(0).returns(deferred1.promise);
     fetch.onCall(1).returns(deferred2.promise);
     fetch.onCall(2).returns(deferred3.promise);
@@ -356,7 +356,7 @@ describe('fetch-retry', function() {
       thenCallback = sinon.spy();
 
       fetchRetry('http://someUrl', options)
-        .then(thenCallback)
+        .then(thenCallback);
     });
 
     describe('when first call is unsuccessful', function() {

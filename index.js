@@ -38,7 +38,7 @@ module.exports = function(url, options) {
           if (Array.isArray(retryOn) && retryOn.indexOf(response.status) === -1) {
             resolve(response);
           } else if (typeof retryOn === 'function') {
-            if (retryOn(attempt, null, response)) {
+            if (attempt < retries && retryOn(attempt, null, response)) {
               retry(attempt, null, response);
             } else {
               resolve(response);
@@ -53,7 +53,7 @@ module.exports = function(url, options) {
         })
         .catch(function(error) {
           if (typeof retryOn === 'function') {
-            if (retryOn(attempt, error, null)) {
+            if (attempt < retries && retryOn(attempt, error, null)) {
               retry(attempt, error, null);
             } else {
               reject(error);

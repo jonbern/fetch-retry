@@ -4,6 +4,7 @@
   "description": "Adds retry functionality to the Fetch API",
   "repository": "https://github.com/jonbern/fetch-retry.git",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "nyc mocha test/**/**.js",
     "integration-test": "mocha test/integration/"

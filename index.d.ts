@@ -1,4 +1,3 @@
-
 declare module 'fetch-retry' {
   type RequestDelayFunction = ((
     attempt: number,
@@ -10,7 +9,7 @@ declare module 'fetch-retry' {
     attempt: number,
     error: Error | null,
     response: Response | null
-  ) => number);
+  ) => boolean);
 
   interface IRequestInitWithRetry extends RequestInit {
     retries?: number;
@@ -18,6 +17,6 @@ declare module 'fetch-retry' {
     retryOn?: number[] | RequestRetryOnFunction;
   }
 
-  function fetch(url: RequestInit, options: IRequestInitWithRetry): Promise<Response>;
+  function fetch(url: String, options?: IRequestInitWithRetry): Promise<Response>;
   export = fetch;
 }

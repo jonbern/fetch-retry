@@ -19,7 +19,7 @@
   "author": "Jon K. Bernhardsen",
   "license": "MIT",
   "dependencies": {
-    "es6-promise": "^4.2.6",
+    "es6-promise": "^4.2.8",
     "isomorphic-fetch": "^2.2.1"
   },
   "devDependencies": {
@@ -28,10 +28,10 @@
     "chai-as-promised": "^7.1.1",
     "eslint": "^5.16.0",
     "expectations": "^0.7.1",
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     "mocha": "^5.2.0",
-    "nyc": "^14.0.0",
-    "proxyquire": "^2.1.0",
+    "nyc": "^14.1.1",
+    "proxyquire": "^2.1.1",
     "sinon": "^6.3.5"
   }
 }

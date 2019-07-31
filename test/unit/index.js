@@ -1,5 +1,5 @@
 'use strict';
-require('isomorphic-fetch');
+require('cross-fetch');
 var proxyquire = require('proxyquire').noPreserveCache();
 var sinon = require('sinon');
 var expect = require('expectations');
@@ -42,7 +42,7 @@ describe('fetch-retry', function() {
     fetch.onCall(3).returns(deferred4.promise);
 
     var stubs = {
-      'isomorphic-fetch': fetch
+      'cross-fetch': fetch
     };
 
     fetchRetry = proxyquire('../../', stubs);

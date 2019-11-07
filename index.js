@@ -38,8 +38,17 @@ module.exports = function(url, options) {
           if (Array.isArray(retryOn) && retryOn.indexOf(response.status) === -1) {
             resolve(response);
           } else if (typeof retryOn === 'function') {
-            if (retryOn(attempt, null, response)) {
+            var retryOnRes = retryOn(attempt, null, response);
+            if (typeof retryOnRes === 'boolean' && retryOnRes) {
               retry(attempt, null, response);
+            } else if (typeof retryOnRes === 'object' && typeof retryOnRes.then === 'function') {
+              retryOnRes.then((res) => {
+                if(res){
+                  retry(attempt, null, response);
+                } else {
+                  resolve(response);
+                }
+              })
             } else {
               resolve(response);
             }

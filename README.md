@@ -86,3 +86,26 @@ fetch(url, {
       console.log(json);
     });
 ```
+
+## Example: Retry custom behavior with async
+The `retryOn` option may also be used with async and await for calling asyncronous functions:
+
+```javascript
+fetch(url, {
+    retryOn: async function(attempt, error, response) {
+      if (attempt > 3) return false;
+
+      if (error !== null) {
+        var json = await response.json();
+        if (json.property !== undefined) {
+          return true;
+        }
+      }
+    })
+    .then(function(response) {
+      return response.json();
+    }).then(function(json) {
+      // do something with the result
+      console.log(json);
+    });
+```

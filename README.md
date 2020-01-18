@@ -2,7 +2,7 @@
 
 Adds retry functionality to the `Fetch` API.
 
-It wraps [isomorphic-fetch](https://github.com/matthew-andrews/isomorphic-fetch) and retries requests that fail due to network issues. It can also be configured to retry requests on specific HTTP status codes.
+It wraps any `Fetch` API package (eg: [isomorphic-fetch](https://github.com/matthew-andrews/isomorphic-fetch), [cross-fetch](https://github.com/lquixada/cross-fetch), [isomorphic-unfetch](https://github.com/developit/unfetch ) and etc.) and retries requests that fail due to network issues. It can also be configured to retry requests on specific HTTP status codes.
 
 [![Build Status](https://travis-ci.org/jonbern/fetch-retry.svg?branch=master)](https://travis-ci.org/jonbern/fetch-retry)
 
@@ -18,7 +18,8 @@ npm install fetch-retry --save
 These properties are optional, and when omitted will default to 3 retries, a 1000ms retry delay, and to retry only on network errors.
 
 ```javascript
-var fetch = require('fetch-retry');
+var originalFetch = require('isomorphic-fetch');
+var fetch = require('fetch-retry')(originalFetch);
 ```
 
 ```javascript

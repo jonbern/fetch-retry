@@ -17,6 +17,6 @@ declare module 'fetch-retry' {
     retryOn?: number[] | RequestRetryOnFunction;
   }
 
-  function fetch(url: String, options?: IRequestInitWithRetry): Promise<Response>;
-  export = fetch;
+  function fetchBuilder(fetch: (url: String, options?: RequestInit) => Promise<Response>): ((url: String, options?: IRequestInitWithRetry) => Promise<Response>);
+  export = fetchBuilder;
 }

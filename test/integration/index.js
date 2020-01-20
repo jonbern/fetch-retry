@@ -4,7 +4,8 @@ const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 chai.should();
 const childProcess = require('child_process');
-const fetchRetry = require('../../');
+const fetch = require('isomorphic-fetch');
+const fetchRetry = require('../../')(fetch);
 
 describe('fetch-retry integration tests', () => {
 

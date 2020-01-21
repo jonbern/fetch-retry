@@ -1,6 +1,6 @@
-declare const _fetch: typeof fetch;
-
 declare module 'fetch-retry' {
+  const _fetch: typeof fetch;
+
   type RequestDelayFunction = ((
     attempt: number,
     error: Error | null,

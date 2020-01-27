@@ -74,21 +74,21 @@ describe('fetch-retry integration tests', () => {
       });
 
       it('retries the request #retries times', () => {
-        const options = {
+        const init = {
           retries: 3,
           retryDelay: 100,
           retryOn
         };
 
-        const expectedCallCount = options.retries + 1;
+        const expectedCallCount = init.retries + 1;
 
-        return fetchRetry(baseUrl, options)
+        return fetchRetry(baseUrl, init)
           .then(getCallCount)
           .should.eventually.equal(expectedCallCount);
       });
 
       it('eventually resolves the promise with the response of the last request', () => {
-        const options = {
+        const init = {
           retries: 3,
           retryDelay: 100,
           retryOn
@@ -99,7 +99,7 @@ describe('fetch-retry integration tests', () => {
           ok: false
         };
 
-        return fetchRetry(baseUrl, options)
+        return fetchRetry(baseUrl, init)
           .then(response => {
             return {
               status: response.status,
@@ -124,7 +124,7 @@ describe('fetch-retry integration tests', () => {
       });
 
       it('retries the request up to #retries times', () => {
-        const options = {
+        const init = {
           retries: 3,
           retryDelay: 100,
           retryOn: [retryOnStatus]
@@ -132,13 +132,13 @@ describe('fetch-retry integration tests', () => {
 
         const expectedCallCount = requestsToRetry + 1;
 
-        return fetchRetry(baseUrl, options)
+        return fetchRetry(baseUrl, init)
           .then(getCallCount)
           .should.eventually.equal(expectedCallCount);
       });
 
       it('eventually resolves the promise with the received response of the last request', () => {
-        const options = {
+        const init = {
           retries: 3,
           retryDelay: 100,
           retryOn: [retryOnStatus]
@@ -149,7 +149,7 @@ describe('fetch-retry integration tests', () => {
           ok: true
         };
 
-        return fetchRetry(baseUrl, options)
+        return fetchRetry(baseUrl, init)
           .then(response => {
             return {
               status: response.status,
@@ -174,15 +174,15 @@ describe('fetch-retry integration tests', () => {
       });
 
       it('retries the request #retries times', () => {
-        const options = {
+        const init = {
           retries: 3,
           retryDelay: 100,
           retryOn
         };
 
-        const expectedCallCount = options.retries + 1;
+        const expectedCallCount = init.retries + 1;
 
-        return fetchRetry(baseUrl, options)
+        return fetchRetry(baseUrl, init)
           .then(getCallCount)
           .should.eventually.equal(expectedCallCount);
       });

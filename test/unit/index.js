@@ -60,7 +60,7 @@ describe('fetch-retry', function () {
     fetchRetry = fetchBuilder(fetch);
   });
 
-  describe('#url', function () {
+  describe('#input', function () {
 
     var expectedUrl = 'http://some-url.com';
 
@@ -68,37 +68,37 @@ describe('fetch-retry', function () {
       fetchRetry(expectedUrl);
     });
 
-    it('passes #url to fetch', function () {
+    it('passes #input to fetch', function () {
       expect(fetch.getCall(0).args[0]).toBe(expectedUrl);
     });
 
   });
 
-  describe('#options', function () {
+  describe('#init', function () {
 
-    describe('when #options is provided', function () {
+    describe('when #init is provided', function () {
 
-      var options;
+      var init;
 
       beforeEach(function () {
-        options = {
+        init = {
           retries: 3,
           whatever: 'something'
         };
 
-        fetchRetry('http://someUrl', options);
+        fetchRetry('http://someUrl', init);
       });
 
-      it('passes options to fetch', function () {
-        expect(fetch.getCall(0).args[1]).toEqual(options);
+      it('passes init to fetch', function () {
+        expect(fetch.getCall(0).args[1]).toEqual(init);
       });
 
-      describe('when #options.retryOn is not an array or function', () => {
+      describe('when #init.retryOn is not an array or function', () => {
 
         it('throws exception', () => {
           expect(function () {
-            options.retryOn = 503;
-            fetchRetry('http://someUrl', options);
+            init.retryOn = 503;
+            fetchRetry('http://someUrl', init);
           }).toThrow({
             name: 'ArgumentError',
             message: 'retryOn property expects an array or function'
@@ -109,7 +109,7 @@ describe('fetch-retry', function () {
 
     });
 
-    describe('when #options is undefined or null', function () {
+    describe('when #init is undefined or null', function () {
 
       [undefined, null].forEach(function (testCase) {
 
@@ -117,7 +117,7 @@ describe('fetch-retry', function () {
           fetchRetry('http://someUrl', testCase);
         });
 
-        it('does not pass through options to fetch', function () {
+        it('does not pass through init to fetch', function () {
           expect(fetch.getCall(0).args[1]).toEqual(undefined);
         });
 
@@ -127,9 +127,9 @@ describe('fetch-retry', function () {
 
   });
 
-  describe('#options.retries', function () {
+  describe('#init.retries', function () {
 
-    describe('when #options.retries=3 (default)', function () {
+    describe('when #init.retries=3 (default)', function () {
 
       beforeEach(function () {
         thenCallback = sinon.spy();
@@ -272,7 +272,7 @@ describe('fetch-retry', function () {
 
     });
 
-    describe('when #options.retries=1', function () {
+    describe('when #init.retries=1', function () {
 
       beforeEach(function () {
         thenCallback = sinon.spy();
@@ -356,7 +356,7 @@ describe('fetch-retry', function () {
 
     });
 
-    describe('when #options.retries=0', function () {
+    describe('when #init.retries=0', function () {
 
       beforeEach(function () {
         thenCallback = sinon.spy();
@@ -405,7 +405,7 @@ describe('fetch-retry', function () {
 
     });
 
-    describe('when #options.retries is not a a positive integer', () => {
+    describe('when #init.retries is not a a positive integer', () => {
 
       ['1', -1, 'not a number', null].forEach(invalidRetries => {
 
@@ -425,22 +425,22 @@ describe('fetch-retry', function () {
 
   });
 
-  describe('#options.retryDelay', function () {
+  describe('#init.retryDelay', function () {
 
-    describe('when #options.retryDelay is a number', function () {
+    describe('when #init.retryDelay is a number', function () {
 
-      var options;
+      var init;
       var retryDelay;
 
       beforeEach(function () {
         retryDelay = 5000;
-        options = {
+        init = {
           retryDelay: retryDelay
         };
 
         thenCallback = sinon.spy();
 
-        fetchRetry('http://someUrl', options)
+        fetchRetry('http://someUrl', init)
           .then(thenCallback);
       });
 
@@ -478,20 +478,20 @@ describe('fetch-retry', function () {
 
     });
 
-    describe('when #options.retryDelay is 0', function () {
+    describe('when #init.retryDelay is 0', function () {
 
-      var options;
+      var init;
       var retryDelay;
 
       beforeEach(function () {
         retryDelay = 0;
-        options = {
+        init = {
           retryDelay: retryDelay
         };
 
         thenCallback = sinon.spy();
 
-        fetchRetry('http://someUrl', options)
+        fetchRetry('http://someUrl', init)
           .then(thenCallback);
       });
 
@@ -517,7 +517,7 @@ describe('fetch-retry', function () {
 
     });
 
-    describe('when #options.retryDelay is not a a positive integer', () => {
+    describe('when #init.retryDelay is not a a positive integer', () => {
 
       ['1', -1, 'not a number', null].forEach(invalidDelay => {
 
@@ -535,20 +535,20 @@ describe('fetch-retry', function () {
 
     });
 
-    describe('when #options.retryDelay is a function', function () {
+    describe('when #init.retryDelay is a function', function () {
 
-      var options;
+      var init;
       var retryDelay;
 
       beforeEach(function () {
         retryDelay = sinon.stub().returns(5000);
-        options = {
+        init = {
           retryDelay: retryDelay
         };
 
         thenCallback = sinon.spy();
 
-        fetchRetry('http://someUrl', options)
+        fetchRetry('http://someUrl', init)
           .then(thenCallback);
       });
 
@@ -604,23 +604,23 @@ describe('fetch-retry', function () {
 
   });
 
-  describe('#options.retryOn', () => {
+  describe('#init.retryOn', () => {
 
-    describe('when #options.retryOn is an array', () => {
+    describe('when #init.retryOn is an array', () => {
 
-      var options;
+      var init;
       var retryOn;
 
       beforeEach(function () {
         retryOn = [503, 404];
-        options = {
+        init = {
           retryOn: retryOn
         };
 
         thenCallback = sinon.spy();
         catchCallback = sinon.spy();
 
-        fetchRetry('http://someUrl', options)
+        fetchRetry('http://someUrl', init)
           .then(thenCallback)
           .catch((catchCallback));
       });
@@ -667,21 +667,21 @@ describe('fetch-retry', function () {
 
     });
 
-    describe('when #options.retryOn is a function', function () {
+    describe('when #init.retryOn is a function', function () {
 
-      var options;
+      var init;
       var retryOn;
 
       beforeEach(function () {
         retryOn = sinon.stub();
-        options = {
+        init = {
           retryOn: retryOn
         };
 
         thenCallback = sinon.spy();
         catchCallback = sinon.spy();
 
-        fetchRetry('http://someUrl', options)
+        fetchRetry('http://someUrl', init)
           .then(thenCallback)
           .catch((catchCallback));
       });
@@ -843,16 +843,16 @@ describe('fetch-retry', function () {
 
     });
 
-    describe('when #options.retryOn is not an array or function', function () {
+    describe('when #init.retryOn is not an array or function', function () {
 
-      var options;
+      var init;
 
-      describe('when #options.retryOn is not an array or function', () => {
+      describe('when #init.retryOn is not an array or function', () => {
 
         it('throws exception', () => {
           expect(function () {
-            options.retryOn = 503;
-            fetchRetry('http://someUrl', options);
+            init.retryOn = 503;
+            fetchRetry('http://someUrl', init);
           }).toThrow({
             name: 'ArgumentError',
             message: 'retryOn property expects an array or function'

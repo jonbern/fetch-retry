@@ -15,8 +15,17 @@ describe('fetchBuilder', function () {
     });
   });
 
+  it('should accept defaults object as argument', function () {
+    expect(function () {
+      fetchBuilder(function () { }, "");
+    }).toThrow({
+      name: 'ArgumentError',
+      message: 'defaults must be an object'
+    });
+  });
+
   it('should return fetchRetry function', function () {
-    expect(typeof fetchBuilder(function () { })).toBe('function');
+    expect(typeof fetchBuilder(function () { }, {retries: 1})).toBe('function');
   });
 });
 
@@ -272,6 +281,110 @@ describe('fetch-retry', function () {
 
     });
 
+    describe('when #defaults.retries is not a a positive integer', () => {
+      ['1', -1, 'not a number', null].forEach(invalidRetries => {
+        it('throws error', () => {
+          const expectedError = {
+            name: 'ArgumentError',
+            message: 'retries must be a positive integer'
+          };
+          expect(() => {
+            var fetchRetryWithDefaults = fetchBuilder(fetch, {retries: invalidRetries});
+            fetchRetryWithDefaults('http://someurl');
+          }).toThrow(expectedError);
+        });
+      });
+    });
+
+    describe('when #defaults.retryDelay is not a a positive integer', () => {
+
+      ['1', -1, 'not a number', null].forEach(invalidDelay => {
+
+        it('throws error', () => {
+          const expectedError = {
+            name: 'ArgumentError',
+            message: 'retryDelay must be a positive integer or a function returning a positive integer'
+          };
+          expect(() => {
+            var fetchRetryWithDefaults = fetchBuilder(fetch, { retryDelay: invalidDelay });
+            fetchRetryWithDefaults('http://someurl');
+          }).toThrow(expectedError);
+        });
+
+      });
+
+    });
+
+    describe('when #defaults.retryDelay is a function', function () {
+
+      var defaults;
+      var retryDelay;
+
+      beforeEach(function () {
+        retryDelay = sinon.stub().returns(5000);
+        defaults = {
+          retryDelay: retryDelay
+        };
+
+        thenCallback = sinon.spy();
+
+        var fetchRetryWithDefaults = fetchBuilder(fetch, defaults);
+        fetchRetryWithDefaults('http://someUrl')
+          .then(thenCallback);
+      });
+    });
+
+    describe('when #defaults.retryOn is not an array or function', function () {
+
+      var defaults = {};
+
+      describe('when #defaults.retryOn is not an array or function', () => {
+
+        it('throws exception', () => {
+          expect(function () {
+            defaults.retryOn = 503;
+            var fetchRetryWithDefaults = fetchBuilder(fetch, defaults);
+            fetchRetryWithDefaults('http://someUrl');
+          }).toThrow({
+            name: 'ArgumentError',
+            message: 'retryOn property expects an array or function'
+          });
+        });
+
+      });
+
+    });
+
+    describe('when #defaults.retries=0', function () {
+      beforeEach(function () {
+        thenCallback = sinon.spy();
+        catchCallback = sinon.spy();
+
+        var fetchRetryWithDefaults = fetchBuilder(fetch, {retries: 0});
+
+        fetchRetryWithDefaults('http://someurl')
+          .then(thenCallback)
+          .catch(catchCallback);
+      });
+
+      describe('when first call is a failure', function () {
+        beforeEach(function () {
+          deferred1.reject();
+        });
+
+        describe('when rejected', function () {
+
+          it('invokes the catch callback', function () {
+            expect(catchCallback.called).toBe(true);
+          });
+
+          it('does not call fetch again', function () {
+            expect(fetch.callCount).toBe(1);
+          });
+        });
+      })
+    })
+    
     describe('when #init.retries=1', function () {
 
       beforeEach(function () {

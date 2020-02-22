@@ -1,3 +1,5 @@
+/// <reference lib="dom" />
+
 declare module 'fetch-retry' {
   const _fetch: typeof fetch;
 

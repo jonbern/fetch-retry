@@ -1,15 +1,37 @@
 'use strict';
 require('es6-promise').polyfill();
 
-module.exports = function (fetch) {
+module.exports = function (fetch, defaults = {}) {
   if (typeof fetch !== 'function') {
     throw new ArgumentError('fetch must be a function');
   }
 
+  if (typeof defaults !== 'object') {
+    throw new ArgumentError('defaults must be an object');
+  }
+
+  if (defaults.retries !== undefined && !isPositiveInteger(defaults.retries)) {
+    throw new ArgumentError('retries must be a positive integer');
+  }
+
+  if (defaults.retryDelay !== undefined && !isPositiveInteger(defaults.retryDelay) && typeof defaults.retryDelay !== 'function') {
+    throw new ArgumentError('retryDelay must be a positive integer or a function returning a positive integer');
+  }
+
+  if (defaults.retryOn !== undefined && !Array.isArray(defaults.retryOn) && typeof defaults.retryOn !== 'function') {
+    throw new ArgumentError('retryOn property expects an array or function');
+  }
+
+  defaults = {...{
+    retries: 3,
+    retryDelay: 1000,
+    retryOn: [],
+  }, ...defaults}
+
   return function fetchRetry(input, init) {
-    var retries = 3;
-    var retryDelay = 1000;
-    var retryOn = [];
+    var retries = defaults.retries;
+    var retryDelay = defaults.retryDelay;
+    var retryOn = defaults.retryOn;
 
     if (init && init.retries !== undefined) {
       if (isPositiveInteger(init.retries)) {

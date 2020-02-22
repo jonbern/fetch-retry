@@ -22,11 +22,13 @@ module.exports = function (fetch, defaults = {}) {
     throw new ArgumentError('retryOn property expects an array or function');
   }
 
-  defaults = {...{
+  const baseDefaults = {
     retries: 3,
     retryDelay: 1000,
     retryOn: [],
-  }, ...defaults}
+  };
+  
+  defaults = Object.assign(baseDefaults, defaults);
 
   return function fetchRetry(input, init) {
     var retries = defaults.retries;

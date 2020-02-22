@@ -15,7 +15,7 @@ npm install fetch-retry --save
 ## Example
 `fetch-retry` is used the same way as `fetch`, but also accepts `retries`, `retryDelay`, and `retryOn` on the `options` object.
 
-These properties are optional, and when omitted will default to 3 retries, a 1000ms retry delay, and to retry only on network errors unless different defaults have been provided in the require of the project.
+These properties are optional, and unless different defaults have been specified when requiring `fetch-retry`, these will default to 3 retries, with a 1000ms retry delay, and to only retry on network errors.
 
 ```javascript
 var originalFetch = require('isomorphic-fetch');
@@ -36,7 +36,7 @@ fetch(url, {
   });
 ```
 
-or passing defaults
+or passing your own defaults:
 
 ```javascript
 var originalFetch = require('isomorphic-fetch');

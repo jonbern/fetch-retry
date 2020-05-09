@@ -1,7 +1,6 @@
 /// <reference lib="dom" />
 
 declare module 'fetch-retry' {
-  const _fetch: typeof fetch;
 
   type RequestDelayFunction = ((
     attempt: number,
@@ -21,6 +20,6 @@ declare module 'fetch-retry' {
     retryOn?: number[] | RequestRetryOnFunction;
   }
 
-  function fetchBuilder(fetch: typeof _fetch, defaults?: object): ((input: RequestInfo, init?: IRequestInitWithRetry) => Promise<Response>);
+  function fetchBuilder<T>(fetch: T, defaults?: object): ((input: RequestInfo, init?: IRequestInitWithRetry) => Promise<Response>);
   export = fetchBuilder;
 }

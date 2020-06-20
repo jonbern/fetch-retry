@@ -1,7 +1,8 @@
 'use strict';
 require('es6-promise').polyfill();
 
-module.exports = function (fetch, defaults = {}) {
+module.exports = function (fetch, defaults) {
+  defaults = defaults || {};
   if (typeof fetch !== 'function') {
     throw new ArgumentError('fetch must be a function');
   }
@@ -22,7 +23,7 @@ module.exports = function (fetch, defaults = {}) {
     throw new ArgumentError('retryOn property expects an array or function');
   }
 
-  const baseDefaults = {
+  var baseDefaults = {
     retries: 3,
     retryDelay: 1000,
     retryOn: [],

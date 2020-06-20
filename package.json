@@ -25,11 +25,11 @@
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^6.2.2",
+    "eslint": "^6.8.0",
     "expectations": "^0.7.1",
     "express": "^4.17.1",
     "isomorphic-fetch": "^2.2.1",
-    "mocha": "^5.2.0",
+    "mocha": "^8.0.1",
     "nyc": "^14.1.1",
     "sinon": "^6.3.5"
   }

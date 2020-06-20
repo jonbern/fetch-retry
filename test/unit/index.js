@@ -6,7 +6,7 @@ var Promise = require('es6-promise');
 
 describe('fetchBuilder', function () {
 
-  it('should accept fetch function as argument', function () {
+  it('throws when fetch is not a function', function () {
     expect(function () {
       fetchBuilder();
     }).toThrow({
@@ -15,16 +15,16 @@ describe('fetchBuilder', function () {
     });
   });
 
-  it('should accept defaults object as argument', function () {
+  it('throws when default is not an object', function () {
     expect(function () {
-      fetchBuilder(function () { }, "");
+      fetchBuilder(function () { }, 'this is a string, not an object');
     }).toThrow({
       name: 'ArgumentError',
       message: 'defaults must be an object'
     });
   });
 
-  it('should return fetchRetry function', function () {
+  it('returns fetchRetry when provided valid constructor arguments', function () {
     expect(typeof fetchBuilder(function () { }, {retries: 1})).toBe('function');
   });
 });
@@ -384,7 +384,7 @@ describe('fetch-retry', function () {
         });
       })
     })
-    
+
     describe('when #init.retries=1', function () {
 
       beforeEach(function () {

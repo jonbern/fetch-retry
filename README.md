@@ -4,7 +4,7 @@ Adds retry functionality to the `Fetch` API.
 
 It wraps any `Fetch` API package (eg: [isomorphic-fetch](https://github.com/matthew-andrews/isomorphic-fetch), [cross-fetch](https://github.com/lquixada/cross-fetch), [isomorphic-unfetch](https://github.com/developit/unfetch) and etc.) and retries requests that fail due to network issues. It can also be configured to retry requests on specific HTTP status codes.
 
-[![Build Status](https://travis-ci.org/jonbern/fetch-retry.svg?branch=master)](https://travis-ci.org/jonbern/fetch-retry)
+[![Build Status](https://travis-ci.org/jonbern/fetch-retry.svg)](https://travis-ci.org/jonbern/fetch-retry)
 
 ## npm package
 

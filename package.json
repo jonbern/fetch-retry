@@ -1,12 +1,12 @@
 {
   "name": "fetch-retry",
-  "version": "3.2.2",
+  "version": "3.2.3",
   "description": "Extend any fetch library with retry functionality",
   "repository": "https://github.com/jonbern/fetch-retry.git",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "lint":"eslint index.js ./test/**/*.js",
+    "lint": "eslint index.js ./test/**/*.js",
     "test": "nyc mocha test/**/**.js && npm run lint",
     "integration-test": "mocha test/integration/"
   },

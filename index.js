@@ -60,7 +60,6 @@ module.exports = function (fetch, defaults) {
       }
     }
 
-    // eslint-disable-next-line no-undef
     return new Promise(function (resolve, reject) {
       var wrappedFetch = function (attempt) {
         fetch(input, init)

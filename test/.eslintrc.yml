@@ -2,6 +2,6 @@ env:
   node: true
   mocha: true
 parserOptions:
-  ecmaVersion: 9
+  ecmaVersion: 10
 rules:
   no-console: 0

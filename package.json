@@ -6,7 +6,8 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "test": "nyc mocha test/**/**.js",
+    "lint":"eslint index.js ./test/**/*.js",
+    "test": "nyc mocha test/**/**.js && npm run lint",
     "integration-test": "mocha test/integration/"
   },
   "keywords": [

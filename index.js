@@ -28,7 +28,7 @@ module.exports = function (fetch, defaults) {
     retryDelay: 1000,
     retryOn: [],
   };
-  
+
   defaults = Object.assign(baseDefaults, defaults);
 
   return function fetchRetry(input, init) {
@@ -60,6 +60,7 @@ module.exports = function (fetch, defaults) {
       }
     }
 
+    // eslint-disable-next-line no-undef
     return new Promise(function (resolve, reject) {
       var wrappedFetch = function (attempt) {
         fetch(input, init)

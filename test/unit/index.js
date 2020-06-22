@@ -382,8 +382,8 @@ describe('fetch-retry', function () {
             expect(fetch.callCount).toBe(1);
           });
         });
-      })
-    })
+      });
+    });
 
     describe('when #init.retries=1', function () {
 

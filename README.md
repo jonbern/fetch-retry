@@ -18,6 +18,8 @@ npm install fetch-retry --save
 These properties are optional, and unless different defaults have been specified when requiring `fetch-retry`, these will default to 3 retries, with a 1000ms retry delay, and to only retry on network errors.
 
 ```javascript
+require('es6-promise').polyfill();
+
 var originalFetch = require('isomorphic-fetch');
 var fetch = require('fetch-retry')(originalFetch);
 ```
@@ -45,6 +47,9 @@ var fetch = require('fetch-retry')(originalFetch, {
     retryDelay: 800
   });
 ```
+
+> `fetch-retry` uses promises and requires you to polyfill the Promise API in order to support Internet Explorer.
+
 
 ## Example: Exponential backoff
 The default behavior of `fetch-retry` is to wait a fixed amount of time between attempts, but it is also possible to customize this by passing a function as the `retryDelay` option. The function is supplied three arguments: `attempt` (starting at 0), `error` (in case of a network error), and `response`. It must return a number indicating the delay.

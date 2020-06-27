@@ -2,7 +2,6 @@
 var fetchBuilder = require('../../');
 var sinon = require('sinon');
 var expect = require('expectations');
-var Promise = require('es6-promise');
 
 describe('fetchBuilder', function () {
 
@@ -982,6 +981,7 @@ describe('fetch-retry', function () {
 
 function defer() {
   var resolve, reject;
+  // eslint-disable-next-line no-undef
   var promise = new Promise(function () {
     resolve = arguments[0];
     reject = arguments[1];

@@ -19,9 +19,7 @@
   ],
   "author": "Jon K. Bernhardsen",
   "license": "MIT",
-  "dependencies": {
-    "es6-promise": "^4.2.8"
-  },
+  "dependencies": {},
   "devDependencies": {
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",

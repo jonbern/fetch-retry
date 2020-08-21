@@ -15,12 +15,12 @@ declare module 'fetch-retry' {
     response: Response | null
   ) => boolean);
 
-  interface IRequestInitWithRetry extends RequestInit {
+  export interface RequestInitWithRetry extends RequestInit {
     retries?: number;
     retryDelay?: number | RequestDelayFunction;
     retryOn?: number[] | RequestRetryOnFunction;
   }
 
-  function fetchBuilder(fetch: typeof _fetch, defaults?: object): ((input: RequestInfo, init?: IRequestInitWithRetry) => Promise<Response>);
+  function fetchBuilder(fetch: typeof _fetch, defaults?: object): ((input: RequestInfo, init?: RequestInitWithRetry) => Promise<Response>);
   export = fetchBuilder;
 }

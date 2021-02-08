@@ -783,6 +783,7 @@ describe('fetch-retry', function () {
 
       var init;
       var retryOn;
+      var fetchRetryChain;
 
       beforeEach(function () {
         retryOn = sinon.stub();
@@ -793,7 +794,7 @@ describe('fetch-retry', function () {
         thenCallback = sinon.spy();
         catchCallback = sinon.spy();
 
-        fetchRetry('http://someUrl', init)
+        fetchRetryChain = fetchRetry('http://someUrl', init)
           .then(thenCallback)
           .catch((catchCallback));
       });
@@ -958,7 +959,7 @@ describe('fetch-retry', function () {
         describe('when #retryOn() returns Promise with true resolve', () => {
 
           beforeEach(function() {
-            retryOn.returns(new Promise((resolve) => resolve(true)));
+            retryOn.resolves(true);
             deferred1.resolve({ status: 200 });
           });
 
@@ -996,7 +997,7 @@ describe('fetch-retry', function () {
         describe('when #retryOn() returns Promise with false resolve', () => {
 
           beforeEach(function() {
-            retryOn.returns(new Promise((resolve) => resolve(false)));
+            retryOn.resolves(false);
             deferred1.resolve({ status: 502 });
           });
 
@@ -1007,6 +1008,117 @@ describe('fetch-retry', function () {
             });
 
             it('calls fetch 1 time only', function() {
+              expect(fetch.callCount).toBe(1);
+            });
+
+          });
+
+        });
+
+        describe('when #retryOn() throws an error', () => {
+
+          beforeEach(function() {
+            retryOn.throws();
+          });
+
+          describe('when rejected', () => {
+
+            beforeEach(function() {
+              deferred1.reject();
+            });
+
+            it('retryOn called only once', () => {
+              return fetchRetryChain.finally(() => {
+                expect(retryOn.callCount).toBe(1);
+              });
+            });
+
+            it('invokes the catch callback', function() {
+              return fetchRetryChain.finally(() => {
+                expect(catchCallback.called).toBe(true);
+              });
+            });
+
+            it('called fetch', function() {
+              expect(fetch.callCount).toBe(1);
+            });
+
+          });
+
+          describe('when resolved', () => {
+
+            beforeEach(function() {
+              deferred1.resolve({ status: 200 });
+            });
+
+            it('retryOn called only once', () => {
+              return fetchRetryChain.finally(() => {
+                expect(retryOn.callCount).toBe(1);
+              });
+            });
+
+            it('invokes the catch callback', function() {
+              return fetchRetryChain.finally(() => {
+                expect(catchCallback.called).toBe(true);
+              });
+            });
+
+            it('called fetch', function() {
+              expect(fetch.callCount).toBe(1);
+            });
+
+          });
+
+        });
+
+        describe('when #retryOn() returns a Promise that rejects', () => {
+
+          beforeEach(function() {
+            retryOn.rejects();
+          });
+
+          describe('when rejected', () => {
+
+            beforeEach(function() {
+              deferred1.reject();
+            });
+
+            it('retryOn called only once', () => {
+              return fetchRetryChain.finally(() => {
+                expect(retryOn.callCount).toBe(1);
+              });
+            });
+
+            it('invokes the catch callback', function() {
+              return fetchRetryChain.finally(() => {
+                expect(catchCallback.called).toBe(true);
+              });
+            });
+
+            it('called fetch', function() {
+              expect(fetch.callCount).toBe(1);
+            });
+
+          });
+          describe('when resolved', () => {
+
+            beforeEach(function() {
+              deferred1.resolve({ status: 200 });
+            });
+
+            it('retryOn called only once', () => {
+              return fetchRetryChain.finally(() => {
+                expect(retryOn.callCount).toBe(1);
+              });
+            });
+
+            it('invokes the catch callback', function() {
+              return fetchRetryChain.finally(() => {
+                expect(catchCallback.called).toBe(true);
+              });
+            });
+
+            it('called fetch', function() {
               expect(fetch.callCount).toBe(1);
             });
 

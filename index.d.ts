@@ -13,7 +13,7 @@ declare module 'fetch-retry' {
     attempt: number,
     error: Error | null,
     response: Response | null
-  ) => boolean);
+  ) => boolean | Promise<boolean>);
 
   interface IRequestInitWithRetry extends RequestInit {
     retries?: number;

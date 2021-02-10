@@ -67,10 +67,18 @@ module.exports = function (fetch, defaults) {
             if (Array.isArray(retryOn) && retryOn.indexOf(response.status) === -1) {
               resolve(response);
             } else if (typeof retryOn === 'function') {
-              if (retryOn(attempt, null, response)) {
-                retry(attempt, null, response);
-              } else {
-                resolve(response);
+              try {
+                // eslint-disable-next-line no-undef
+                return Promise.resolve(retryOn(attempt, null, response))
+                  .then(function (retryOnResponse) {
+                    if(retryOnResponse) {
+                      retry(attempt, null, response);
+                    } else {
+                      resolve(response);
+                    }
+                  }).catch(reject);
+              } catch (error) {
+                reject(error);
               }
             } else {
               if (attempt < retries) {
@@ -82,9 +90,20 @@ module.exports = function (fetch, defaults) {
           })
           .catch(function (error) {
             if (typeof retryOn === 'function') {
-              if (retryOn(attempt, error, null)) {
-                retry(attempt, error, null);
-              } else {
+              try {
+                // eslint-disable-next-line no-undef
+                Promise.resolve(retryOn(attempt, error, null))
+                  .then(function (retryOnResponse) {
+                    if(retryOnResponse) {
+                      retry(attempt, error, null);
+                    } else {
+                      reject(error);
+                    }
+                  })
+                  .catch(function(error) {
+                    reject(error);
+                  });
+              } catch(error) {
                 reject(error);
               }
             } else if (attempt < retries) {

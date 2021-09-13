@@ -10,7 +10,8 @@
     "lint": "eslint index.js ./test/**/*.js",
     "test": "nyc mocha test/**/**.js && npm run lint",
     "integration-test": "mocha test/integration/",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "prepare": "husky install"
   },
   "keywords": [
     "fetch",
@@ -34,6 +35,7 @@
     "nyc": "^14.1.1",
     "rollup": "^2.52.3",
     "@rollup/plugin-commonjs": "^19.0.0",
-    "sinon": "^6.3.5"
+    "sinon": "^6.3.5",
+    "husky": "^7.0.0"
   }
 }

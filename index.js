@@ -62,7 +62,10 @@ module.exports = function (fetch, defaults) {
     // eslint-disable-next-line no-undef
     return new Promise(function (resolve, reject) {
       var wrappedFetch = function (attempt) {
-        var _input = input instanceof Request ? input.clone() : input;
+        var _input =
+          typeof Request !== 'undefined' && input instanceof Request
+            ? input.clone()
+            : input;
         fetch(_input, init)
           .then(function (response) {
             if (Array.isArray(retryOn) && retryOn.indexOf(response.status) === -1) {

@@ -11,7 +11,7 @@
     "test": "nyc mocha test/**/**.js && npm run lint",
     "integration-test": "mocha test/integration/",
     "build": "rollup -c",
-    "prepare": "husky install"
+    "prepare": "node -e \"try { require('husky').install() } catch (e) {if (e.code !== 'MODULE_NOT_FOUND') throw e}\""
   },
   "keywords": [
     "fetch",

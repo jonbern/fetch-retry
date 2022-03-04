@@ -22,5 +22,5 @@ declare module 'fetch-retry' {
   }
 
   function fetchBuilder(fetch: typeof _fetch, defaults?: object): ((input: RequestInfo, init?: RequestInitWithRetry) => Promise<Response>);
-  export = fetchBuilder;
+  export default fetchBuilder;
 }

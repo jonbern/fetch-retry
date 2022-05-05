@@ -9,7 +9,7 @@ module.exports = function (fetch, defaults) {
 	if (typeof defaults !== "object") {
 		throw new ArgumentError("defaults must be an object");
 	}
-
+  
 	if (
 		defaults.retries !== undefined &&
 		!isPositiveInteger(defaults.retries)

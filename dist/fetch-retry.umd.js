@@ -67,7 +67,7 @@
       return new Promise(function (resolve, reject) {
         var wrappedFetch = function (attempt) {
           var _input =
-            typeof Request !== 'undefined' && input instanceof Request
+            (typeof input === 'object' && input !==null && 'clone' in input && typeof input.clone === 'function')
               ? input.clone()
               : input;
           fetch(_input, init)

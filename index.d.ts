@@ -1,26 +1,31 @@
 /// <reference lib="dom" />
 
 declare module 'fetch-retry' {
-  const _fetch: typeof fetch;
-
-  type RequestDelayFunction = ((
+  type RequestDelayFunction<TResponse> = ((
     attempt: number,
     error: Error | null,
-    response: Response | null
+    response: TResponse | null
   ) => number);
 
-  type RequestRetryOnFunction = ((
+  type RequestRetryOnFunction<TResponse> = ((
     attempt: number,
     error: Error | null,
-    response: Response | null
+    response: TResponse | null
   ) => boolean | Promise<boolean>);
 
-  export interface RequestInitWithRetry extends RequestInit {
+  interface RetryOptions<TResponse> {
     retries?: number;
-    retryDelay?: number | RequestDelayFunction;
-    retryOn?: number[] | RequestRetryOnFunction;
+    retryDelay?: number | RequestDelayFunction<TResponse>;
+    retryOn?: number[] | RequestRetryOnFunction<TResponse>;
   }
 
-  function fetchBuilder(fetch: typeof _fetch, defaults?: object): ((input: RequestInfo, init?: RequestInitWithRetry) => Promise<Response>);
+  export type RequestInitWithRetry<TFetch extends TFetchStub = typeof fetch> = RetryOptions<TFetchResponse<TFetch>> & TFetchInit<TFetch>;
+
+  type TFetchInput<TFetch> = TFetch extends (input: infer TInput, init?: any) => Promise<any> ? TInput : never;
+  type TFetchInit<TFetch> = TFetch extends (input: any, init?: infer TInit) => Promise<any> ? TInit : never;
+  type TFetchResponse<TFetch> = TFetch extends (input: any, init?: any) => Promise<infer TResponse> ? TResponse : never;
+  type TFetchStub = (input: any, init?: any) => Promise<any>;
+
+  function fetchBuilder<TFetch extends TFetchStub = typeof fetch>(fetch: TFetch, defaults?: RetryOptions<TFetchResponse<TFetch>>): ((input: TFetchInput<TFetch>, init?: RequestInitWithRetry<TFetch>) => Promise<TFetchResponse<TFetch>>);
   export default fetchBuilder;
 }

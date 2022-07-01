@@ -1,6 +1,6 @@
 {
   "name": "fetch-retry",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "Extend any fetch library with retry functionality",
   "repository": "https://github.com/jonbern/fetch-retry.git",
   "main": "index.js",

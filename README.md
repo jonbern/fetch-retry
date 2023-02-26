@@ -1,10 +1,9 @@
 # fetch-retry
 
-Adds retry functionality to the `Fetch` API.
+Adds retry functionality to the [Fetch](https://fetch.spec.whatwg.org/) API.
 
-It wraps any `Fetch` API package (eg: [isomorphic-fetch](https://github.com/matthew-andrews/isomorphic-fetch), [cross-fetch](https://github.com/lquixada/cross-fetch), [isomorphic-unfetch](https://github.com/developit/unfetch) and etc.) and retries requests that fail due to network issues. It can also be configured to retry requests on specific HTTP status codes.
+It wraps any `fetch` API package (eg: [isomorphic-fetch](https://github.com/matthew-andrews/isomorphic-fetch), [cross-fetch](https://github.com/lquixada/cross-fetch), [isomorphic-unfetch](https://github.com/developit/unfetch), or [Node.js native's fetch implementation](https://nodejs.org/dist/latest-v18.x/docs/api/globals.html#fetch)) and retries requests that fail due to network issues. It can also be configured to retry requests on specific HTTP status codes.
 
-[![Build Status](https://travis-ci.org/jonbern/fetch-retry.svg?branch=master)](https://travis-ci.org/jonbern/fetch-retry)
 
 ## npm package
 
@@ -18,10 +17,11 @@ npm install fetch-retry --save
 These properties are optional, and unless different defaults have been specified when requiring `fetch-retry`, these will default to 3 retries, with a 1000ms retry delay, and to only retry on network errors.
 
 ```javascript
-require('es6-promise').polyfill();
+const originalFetch = require('isomorphic-fetch');
+const fetch = require('fetch-retry')(originalFetch);
 
-var originalFetch = require('isomorphic-fetch');
-var fetch = require('fetch-retry')(originalFetch);
+// fetch-retry can also wrap Node.js's native fetch API implementation:
+const fetch = require('fetch-retry')(global.fetch);
 ```
 
 ```javascript
@@ -41,8 +41,8 @@ fetch(url, {
 or passing your own defaults:
 
 ```javascript
-var originalFetch = require('isomorphic-fetch');
-var fetch = require('fetch-retry')(originalFetch, {
+const originalFetch = require('isomorphic-fetch');
+const fetch = require('fetch-retry')(originalFetch, {
     retries: 5,
     retryDelay: 800
   });

@@ -62,6 +62,8 @@ module.exports = function (fetch, defaults) {
     // eslint-disable-next-line no-undef
     return new Promise(function (resolve, reject) {
       var wrappedFetch = function (attempt) {
+        // As of node 18, this is no longer needed since node comes with native support for fetch:
+        /* istanbul ignore next */
         var _input =
           typeof Request !== 'undefined' && input instanceof Request
             ? input.clone()

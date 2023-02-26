@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.fetchRetry = factory());
-}(this, (function () { 'use strict';
+})(this, (function () { 'use strict';
 
   var fetchRetry = function (fetch, defaults) {
     defaults = defaults || {};
@@ -66,6 +66,8 @@
       // eslint-disable-next-line no-undef
       return new Promise(function (resolve, reject) {
         var wrappedFetch = function (attempt) {
+          // As of node 18, this is no longer needed since node comes with native support for fetch:
+          /* istanbul ignore next */
           var _input =
             typeof Request !== 'undefined' && input instanceof Request
               ? input.clone()
@@ -146,4 +148,4 @@
 
   return fetchRetry;
 
-})));
+}));

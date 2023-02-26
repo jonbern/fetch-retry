@@ -22,8 +22,8 @@
   ],
   "author": "Jon K. Bernhardsen",
   "license": "MIT",
+  "dependencies": {},
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^19.0.0",
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
@@ -35,6 +35,7 @@
     "node-fetch": "^2.6.9",
     "nyc": "^14.1.1",
     "rollup": "^2.52.3",
+    "@rollup/plugin-commonjs": "^19.0.0",
     "sinon": "^6.3.5"
   }
 }

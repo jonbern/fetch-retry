@@ -31,7 +31,7 @@
     "expectations": "^0.7.1",
     "express": "^4.17.1",
     "isomorphic-fetch": "^3.0.0",
-    "mocha": "^8.0.1",
+    "mocha": "^10.2.0",
     "nyc": "^14.1.1",
     "rollup": "^2.52.3",
     "@rollup/plugin-commonjs": "^19.0.0",

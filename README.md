@@ -4,6 +4,7 @@ Adds retry functionality to the [Fetch](https://fetch.spec.whatwg.org/) API.
 
 It wraps any `fetch` API package (eg: [isomorphic-fetch](https://github.com/matthew-andrews/isomorphic-fetch), [cross-fetch](https://github.com/lquixada/cross-fetch), [isomorphic-unfetch](https://github.com/developit/unfetch), or [Node.js native's fetch implementation](https://nodejs.org/dist/latest-v18.x/docs/api/globals.html#fetch)) and retries requests that fail due to network issues. It can also be configured to retry requests on specific HTTP status codes.
 
+[![Node.js CI](https://github.com/jonbern/fetch-retry/actions/workflows/node.js.yml/badge.svg)](https://github.com/jonbern/fetch-retry/actions/workflows/node.js.yml)
 
 ## npm package
 

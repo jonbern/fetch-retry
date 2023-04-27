@@ -22,9 +22,14 @@ module.exports = function (fetch, defaults) {
     throw new ArgumentError('retryOn property expects an array or function');
   }
 
+  if (defaults.initialDelay !== undefined && !isPositiveInteger(defaults.initialDelay) && typeof defaults.initialDelay !== 'function') {
+    throw new ArgumentError('initialDelay must be a positive integer or a function returning a positive integer');
+  }
+
   var baseDefaults = {
     retries: 3,
     retryDelay: 1000,
+    initialDelay: 0,
     retryOn: [],
   };
 
@@ -33,6 +38,7 @@ module.exports = function (fetch, defaults) {
   return function fetchRetry(input, init) {
     var retries = defaults.retries;
     var retryDelay = defaults.retryDelay;
+    var initialDelay = defaults.initialDelay;
     var retryOn = defaults.retryOn;
 
     if (init && init.retries !== undefined) {
@@ -40,6 +46,14 @@ module.exports = function (fetch, defaults) {
         retries = init.retries;
       } else {
         throw new ArgumentError('retries must be a positive integer');
+      }
+    }
+
+    if (init && init.initialDelay !== undefined) {
+      if (isPositiveInteger(init.initialDelay) || (typeof init.initialDelay === 'function')) {
+        initialDelay = init.initialDelay;
+      } else {
+        throw new ArgumentError('initialDelay must be a positive integer or a function returning a positive integer');
       }
     }
 
@@ -128,7 +142,16 @@ module.exports = function (fetch, defaults) {
         }, delay);
       }
 
-      wrappedFetch(0);
+      if (initialDelay) {
+        var delayInMs = (typeof initialDelay === 'function') ?
+          initialDelay() : initialDelay;
+        setTimeout(function() {
+          wrappedFetch(0);
+        }, delayInMs);
+      } else {
+        wrappedFetch(0);
+      }
+      
     });
   };
 };

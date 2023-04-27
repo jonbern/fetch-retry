@@ -333,6 +333,65 @@ describe('fetch-retry', function () {
       });
     });
 
+    describe('when #defaults.initialDelay is a function', function () {
+
+      var defaults;
+      var initialDelay;
+
+      beforeEach(function () {
+        initialDelay = sinon.stub().returns(5000);
+        defaults = {
+          initialDelay: initialDelay
+        };
+
+        thenCallback = sinon.spy();
+
+        var fetchRetryWithDefaults = fetchBuilder(fetch, defaults);
+        fetchRetryWithDefaults('http://someUrl')
+          .then(thenCallback);
+      });
+    });
+
+    describe('when #defaults.initialDelay is not a a positive integer', () => {
+
+      ['1', -1, 'not a number', null].forEach(invalidDelay => {
+
+        it('throws error', () => {
+          const expectedError = {
+            name: 'ArgumentError',
+            message: 'initialDelay must be a positive integer or a function returning a positive integer'
+          };
+          expect(() => {
+            var fetchRetryWithDefaults = fetchBuilder(fetch, { initialDelay: invalidDelay });
+            fetchRetryWithDefaults('http://someurl');
+          }).toThrow(expectedError);
+        });
+
+      });
+
+    });
+
+    describe('when #defaults.initialDelay is not a function', function () {
+
+      var defaults = {};
+
+      describe('when #defaults.initialDelay is not a function', () => {
+
+        it('throws exception', () => {
+          expect(function () {
+            defaults.initialDelay = { error: 1 };
+            var fetchRetryWithDefaults = fetchBuilder(fetch, defaults);
+            fetchRetryWithDefaults('http://someUrl');
+          }).toThrow({
+            name: 'ArgumentError',
+            message: 'initialDelay must be a positive integer or a function returning a positive integer'
+          });
+        });
+
+      });
+
+    });
+
     describe('when #defaults.retryOn is not an array or function', function () {
 
       var defaults = {};
@@ -707,6 +766,121 @@ describe('fetch-retry', function () {
             });
 
           });
+
+        });
+
+      });
+
+    });
+
+  });
+
+  describe('#init.initialDelay', function () {
+
+    describe('when #init.initialDelay is a number', function () {
+
+      var init;
+      var initialDelay;
+
+      beforeEach(function () {
+        initialDelay = 5000;
+        init = {
+          initialDelay: initialDelay
+        };
+
+        thenCallback = sinon.spy();
+
+        fetchRetry('http://someUrl', init)
+          .then(thenCallback);
+      });
+
+      describe('when first call is unsuccessful', function () {
+
+        beforeEach(function () {
+          deferred1.reject();
+        });
+
+        describe('after specified time', function () {
+
+          beforeEach(function () {
+            clock.tick(initialDelay);
+          });
+
+          it('invokes fetch again', function () {
+            expect(fetch.callCount).toBe(1);
+          });
+
+        });
+
+        describe('after less than specified time', function () {
+
+          beforeEach(function () {
+            clock.tick(1000);
+          });
+
+          it('does not invoke fetch again', function () {
+            expect(fetch.callCount).toBe(0);
+          });
+
+        });
+
+      });
+
+    });
+
+    describe('when #init.initialDelay is not a a positive integer', () => {
+
+      ['1', -1, 'not a number', null].forEach(invalidDelay => {
+
+        it('throws error', () => {
+          const expectedError = {
+            name: 'ArgumentError',
+            message: 'initialDelay must be a positive integer or a function returning a positive integer'
+          };
+          expect(() => {
+            fetchRetry('http://someurl', { initialDelay: invalidDelay });
+          }).toThrow(expectedError);
+        });
+
+      });
+
+    });
+
+    describe('when #init.initialDelay is a function', function () {
+
+      var init;
+      var initialDelay;
+
+      beforeEach(function () {
+        initialDelay = sinon.stub().returns(5000);
+        init = {
+          initialDelay: initialDelay
+        };
+
+        thenCallback = sinon.spy();
+
+        fetchRetry('http://someUrl', init)
+          .then(thenCallback);
+      });
+
+      describe('when first call is unsuccessful', function () {
+
+        beforeEach(function () {
+          deferred1.reject(new Error('first error'));
+        });
+
+        describe('when the second call is a success', function () {
+
+          beforeEach(function () {
+            deferred2.resolve({ status: 200 });
+            clock.tick(5000);
+          });
+
+          it('invokes the initialDelay function', function () {
+            console.log('initialDelay.lastCall.args', initialDelay.lastCall.args);
+            expect(initialDelay.called).toBe(true);
+          });
+
 
         });
 

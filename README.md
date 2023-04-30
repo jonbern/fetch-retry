@@ -126,3 +126,21 @@ fetch(url, {
       console.log(json);
     });
 ```
+
+## Example: Initial delay
+By default the request is made as soon as the function is called, this might not always be a good thing when you are handing an API which has some kind of burst throttling mecanism.
+In those cases, you can introduce a number indicating of milliseconds that you would like to delay between the function call and the endpoint call.
+You can alternatively to customize this by passing a function as the `initialDelay` function, indicating how to calculate this delay.
+
+```javascript
+fetch(url, {
+    initialDelay: function() {
+        return Math.random() * 1000; // Random delay beween 0 and 1000ms
+    },
+  }).then(function(response) {
+    return response.json();
+  }).then(function(json) {
+    // do something with the result
+    console.log(json);
+  });
+```

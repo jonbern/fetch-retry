@@ -128,9 +128,9 @@ fetch(url, {
 ```
 
 ## Example: Initial delay
-By default the request is made as soon as the function is called, this might not always be a good thing when you are handing an API which has some kind of burst throttling mecanism.
+By default the request is made as soon as the function is called, this might not always be a good thing when you are handing an API which has some kind of [burst throttling mecanism](https://stackoverflow.com/questions/70423503/api-gateway-throttling-burst-limit-vs-rate-limit).
 In those cases, you can introduce a number indicating of milliseconds that you would like to delay between the function call and the endpoint call.
-You can alternatively to customize this by passing a function as the `initialDelay` function, indicating how to calculate this delay.
+You can also customize this by passing a function as the `initialDelay` function, indicating how to calculate this delay.
 
 ```javascript
 fetch(url, {

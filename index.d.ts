@@ -15,7 +15,7 @@ declare module 'fetch-retry' {
     response: Response | null
   ) => boolean | Promise<boolean>);
 
-  interface RequestInitRetryParams {
+  export interface RequestInitRetryParams {
     retries?: number;
     retryDelay?: number | RequestDelayFunction;
     retryOn?: number[] | RequestRetryOnFunction;

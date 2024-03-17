@@ -1,28 +1,29 @@
-/// <reference lib="dom" />
-
 declare module 'fetch-retry' {
-  const _fetch: typeof fetch;
+  export type Fetch = (input: any, init?: any) => Promise<any>;
 
-  type RequestDelayFunction = ((
+  export type RequestDelayFunction<F extends Fetch> = (
     attempt: number,
     error: Error | null,
-    response: Response | null
-  ) => number);
+    response: Awaited<ReturnType<F>> | null,
+  ) => number;
 
-  type RequestRetryOnFunction = ((
+  export type RequestRetryOnFunction<F extends Fetch> = (
     attempt: number,
     error: Error | null,
-    response: Response | null
-  ) => boolean | Promise<boolean>);
+    response: Awaited<ReturnType<F>> | null,
+  ) => boolean | Promise<boolean>;
 
-  export interface RequestInitRetryParams {
+  export type RequestInitRetryParams<F extends Fetch> = {
     retries?: number;
-    retryDelay?: number | RequestDelayFunction;
-    retryOn?: number[] | RequestRetryOnFunction;
-  }
+    retryDelay?: number | RequestDelayFunction<F>;
+    retryOn?: number[] | RequestRetryOnFunction<F>;
+  };
 
-  export type RequestInitWithRetry = RequestInit & RequestInitRetryParams;
+  export type RequestInitWithRetry<F extends Fetch> = Parameters<F>[1] &
+    RequestInitRetryParams<F>;
 
-  function fetchBuilder(fetch: typeof _fetch, defaults?: RequestInitRetryParams): ((input: Parameters<typeof _fetch>[0], init?: RequestInitWithRetry) => Promise<Response>);
-  export default fetchBuilder;
+  export default function fetchBuilder<F extends Fetch>(
+    fetch: F,
+    defaults?: RequestInitRetryParams<F>,
+  ): (input: Parameters<F>[0], init?: RequestInitWithRetry<F>) => ReturnType<F>;
 }

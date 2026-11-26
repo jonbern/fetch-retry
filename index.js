@@ -121,8 +121,14 @@ module.exports = function (fetch, defaults) {
       };
 
       function retry(attempt, error, response) {
-        var delay = (typeof retryDelay === 'function') ?
-          retryDelay(attempt, error, response) : retryDelay;
+        var delay;
+        try {
+          delay = (typeof retryDelay === 'function') ?
+            retryDelay(attempt, error, response) : retryDelay;
+        } catch (delayError) {
+          reject(delayError);
+          return;
+        }
         setTimeout(function () {
           wrappedFetch(++attempt);
         }, delay);

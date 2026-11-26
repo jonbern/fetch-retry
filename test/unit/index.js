@@ -716,6 +716,43 @@ describe('fetch-retry', function () {
 
   });
 
+  describe('when #init.retryDelay throws', function () {
+
+    [
+      { name: 'an array', retryOn: [503] },
+      { name: 'a function', retryOn: function () { return true; } }
+    ].forEach(function (policy) {
+      describe('with #init.retryOn as ' + policy.name, function () {
+        [false, true].forEach(function (networkError) {
+          it('rejects with the delay error after ' + (networkError ? 'a network error' : 'a retryable response'), function () {
+            var delayError = new Error('retry delay failed');
+            var retryDelay = sinon.stub().throws(delayError);
+            var result = fetchRetry('http://someUrl', {
+              retryDelay: retryDelay,
+              retryOn: policy.retryOn
+            });
+
+            if (networkError) {
+              deferred1.reject(new Error('network error'));
+            } else {
+              deferred1.resolve({ status: 503 });
+            }
+
+            return result.then(function () {
+              throw new Error('fetch should reject with the retry delay error');
+            }, function (error) {
+              expect(error).toBe(delayError);
+              expect(retryDelay.callCount).toBe(1);
+              clock.tick(10000);
+              expect(fetch.callCount).toBe(1);
+            });
+          });
+        });
+      });
+    });
+
+  });
+
   describe('#init.retryOn', () => {
 
     describe('when #init.retryOn is an array', () => {
